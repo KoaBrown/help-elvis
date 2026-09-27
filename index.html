@@ -48,7 +48,7 @@
 
   #app {
     width: 100%;
-    max-width: 740px;
+    max-width: 760px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -384,7 +384,7 @@
       <div class="avatar-badge">🐶</div>
       <div class="title-group">
         <h1>Help Elvis Find His Green Ball</h1>
-        <p>Avoid red decoy balls! Push multiple objects!</p>
+        <p>Push boxes, shoes & clothes around furniture to reach the green ball!</p>
       </div>
     </div>
     <div class="hud-stats">
@@ -402,7 +402,7 @@
   <div class="stage-wrapper">
     <div class="room-banner">
       <div class="room-title" id="room-banner-title">🛋️ Room 1: The Foyer</div>
-      <div class="room-goal-tip" id="room-banner-tip">Push furniture out of the way! Watch for red decoy balls!</div>
+      <div class="room-goal-tip" id="room-banner-tip">Push boxes, shoes & clothes out of the way! Reach the green ball!</div>
     </div>
 
     <div class="canvas-container">
@@ -412,9 +412,9 @@
     <!-- Modal Overlay -->
     <div class="overlay" id="gameOverlay">
       <div class="modal-card" id="modalCard">
-        <div class="modal-icon" id="modalIcon">🎉</div>
-        <h2 class="modal-title" id="modalTitle">Room Cleared!</h2>
-        <p class="modal-body" id="modalBody">Elvis trotted into the next room!</p>
+        <div class="modal-icon" id="modalIcon">🎾</div>
+        <h2 class="modal-title" id="modalTitle">Green Ball Found!</h2>
+        <p class="modal-body" id="modalBody">Elvis found his favorite green ball!</p>
         <button class="primary-action-btn" id="modalBtn">Next Room 🐾</button>
       </div>
     </div>
@@ -493,7 +493,6 @@ class SoundEngine {
 
   playWrongBall() {
     if (!this.enabled || !this.ctx) return;
-    // Disappointed dog whine / penalty buzz
     const osc = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
     osc.type = 'sawtooth';
@@ -507,27 +506,9 @@ class SoundEngine {
     osc.stop(this.ctx.currentTime + 0.26);
   }
 
-  playDoorWin() {
-    if (!this.enabled || !this.ctx) return;
-    const notes = [329.63, 392.00, 523.25, 659.25];
-    notes.forEach((f, idx) => {
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-      osc.type = 'triangle';
-      const t = this.ctx.currentTime + idx * 0.07;
-      osc.frequency.setValueAtTime(f, t);
-      gain.gain.setValueAtTime(0.15, t);
-      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
-      osc.connect(gain);
-      gain.connect(this.ctx.destination);
-      osc.start(t);
-      osc.stop(t + 0.36);
-    });
-  }
-
   playFanfare() {
     if (!this.enabled || !this.ctx) return;
-    // Cheerful Bark
+    // Bark
     const osc = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
     osc.type = 'sawtooth';
@@ -558,208 +539,210 @@ class SoundEngine {
   }
 }
 
-/* --- 15 MUCH HARDER ROOMS --- */
+/* --- 15 LEVEL ROOM MAPS --- */
 /*
-  # = Wall
+  # = Wall (Nice wallpaper / wood trim / brick styling)
+  F = Fixed Heavy Furniture (Unmovable obstacles! Sofa, Armchair, Bookcase, Counter)
   . = Floor
   E = Elvis (Black Chihuahua)
-  B = Furniture / Obstacle (Multi-block pushable!)
-  D = Exit Doorway
-  G = Tattered Green Ball (The ONE and ONLY favorite ball!)
-  R = Red Decoy Ball (+5 Moves Penalty Trap!)
+  B = Pushable Cardboard Box
+  S = Pushable Shoe
+  C = Pushable Clothes Pile
+  G = The Tattered Green Ball (Goal in EVERY room!)
+  R = Red Decoy Ball (+5 Penalty Moves!)
 */
 const GAME_LEVELS = [
   {
-    roomNum: 1, title: "Room 1: The Foyer Warmup", tip: "Push multiple objects in a row! Watch out for red decoy balls!",
-    floorTheme: "#32293e", floorAlt: "#2b2237", wallColor: "#524366", furnColor: "#e17055", grid: [
+    roomNum: 1, title: "Room 1: The Entryway Hall", tip: "Push boxes & shoes around immovable armchairs to reach the green ball!",
+    floorTheme: "#32293e", floorAlt: "#2b2237", wallColor: "#524366", wallPattern: "wallpaper", grid: [
       "##########",
       "#........#",
-      "#.E.BB...#",
-      "#...R....#",
-      "#.B...B..#",
-      "#...BB...D",
+      "#.E.BS...#",
+      "#...R.F..#",
+      "#.F...B..#",
+      "#...S...G#",
       "#........#",
       "##########"
     ]
   },
   {
-    roomNum: 2, title: "Room 2: The Coat Closet Clutter", tip: "Shift the heavy crate stack to clear the exit path.",
-    floorTheme: "#24333d", floorAlt: "#1e2a33", wallColor: "#3c5666", furnColor: "#d35400", grid: [
+    roomNum: 2, title: "Room 2: The Shoe & Closet Nook", tip: "Clear a path through shoe piles around the heavy wardrobe.",
+    floorTheme: "#24333d", floorAlt: "#1e2a33", wallColor: "#3c5666", wallPattern: "wood", grid: [
       "##########",
+      "###.F..###",
+      "#..E.S...#",
+      "#.SBC....#",
+      "#...B.R.G#",
+      "#..S.F...#",
       "###....###",
-      "#..E.B...#",
-      "#.BBB....#",
-      "#...B.R..D",
-      "#..B.....#",
-      "###....###",
       "##########"
     ]
   },
   {
-    roomNum: 3, title: "Room 3: The Kitchen Storage", tip: "Decoy red balls look enticing, but Elvis hates them!",
-    floorTheme: "#3d3224", floorAlt: "#33291d", wallColor: "#614e39", furnColor: "#e67e22", grid: [
+    roomNum: 3, title: "Room 3: The Living Room Carpet", tip: "Unmovable sofas create choke points! Watch out for red decoys.",
+    floorTheme: "#3d3224", floorAlt: "#33291d", wallColor: "#614e39", wallPattern: "wallpaper", grid: [
       "##########",
-      "#........#",
-      "#..B.B.R.#",
-      "#.E.BBB..D",
-      "#..B..B..#",
-      "#...B....#",
-      "#..R.....#",
+      "#...F....#",
+      "#..B.S.R.#",
+      "#.E.FFF..G#",
+      "#..C..B..#",
+      "#...S....#",
+      "#..R..F..#",
       "##########"
     ]
   },
   {
-    roomNum: 4, title: "Room 4: The Pantry Squeeze", tip: "Line up multi-block pushes through narrow passages.",
-    floorTheme: "#3b2424", floorAlt: "#301d1d", wallColor: "#613b3b", furnColor: "#c0392b", grid: [
+    roomNum: 4, title: "Room 4: The Bedroom Laundry Squeeze", tip: "Clothes piles and shoe boxes clutter the way around the bed.",
+    floorTheme: "#3b2424", floorAlt: "#301d1d", wallColor: "#613b3b", wallPattern: "brick", grid: [
       "##########",
       "#...##...#",
-      "#.E.BB...#",
-      "#.#.#.#.#",
-      "#...BB...#",
-      "#.B.#.BB.#",
-      "#...R...D",
+      "#.E.CS...#",
+      "#.#F#F#F##",
+      "#...CB...#",
+      "#.S.#F.CS#",
+      "#...R...G#",
       "##########"
     ]
   },
   {
-    roomNum: 5, title: "Room 5: The Sunroom Terrace", tip: "Terracotta planters block the door. Don't touch the red ball!",
-    floorTheme: "#243d31", floorAlt: "#1d3328", wallColor: "#3b614e", furnColor: "#27ae60", grid: [
+    roomNum: 5, title: "Room 5: The Sunroom Patio", tip: "Heavy planter benches can't be moved! Move laundry and shoes.",
+    floorTheme: "#243d31", floorAlt: "#1d3328", wallColor: "#3b614e", wallPattern: "wood", grid: [
       "##########",
-      "#........#",
-      "#.E.BBB..#",
+      "#...F....#",
+      "#.E.SCB..#",
       "#...##...#",
-      "#.B.R..B.#",
-      "#..BBB...D",
+      "#.S.R..F.#",
+      "#..BFC..G#",
       "#........#",
       "##########"
     ]
   },
   {
-    roomNum: 6, title: "Room 6: The Art Studio Layout", tip: "Easel carts stacked three-deep!",
-    floorTheme: "#3d243a", floorAlt: "#321d2f", wallColor: "#613b5b", furnColor: "#8e44ad", grid: [
+    roomNum: 6, title: "Room 6: The Messy Art Studio", tip: "Paint boxes, sneakers, and hoodie piles block the corner.",
+    floorTheme: "#3d243a", floorAlt: "#321d2f", wallColor: "#613b5b", wallPattern: "wallpaper", grid: [
       "###########",
-      "#.........#",
-      "#..B.BBB..#",
-      "#.E..B.R..#",
-      "#...BBB...#",
-      "#.....BB..D",
+      "#...F.....#",
+      "#..B.SCS..#",
+      "#.E..F.R..#",
+      "#...CCC...#",
+      "#.....FB.G#",
       "#.........#",
       "###########"
     ]
   },
   {
-    roomNum: 7, title: "Room 7: The Bookcase Labyrinth", tip: "Complex Sokoban pathing required.",
-    floorTheme: "#332c24", floorAlt: "#28231d", wallColor: "#544637", furnColor: "#a0522d", grid: [
+    roomNum: 7, title: "Room 7: The Bookcase Study", tip: "Heavy bookcases (F) form solid walls.",
+    floorTheme: "#332c24", floorAlt: "#28231d", wallColor: "#544637", wallPattern: "wood", grid: [
       "###########",
-      "#...###...#",
-      "#.E.BBB.B.#",
+      "#...FFF...#",
+      "#.E.SBC.B.#",
       "#...#...R.#",
-      "#.B.#.BBB.#",
-      "#....B....D",
+      "#.B.#FSSS.#",
+      "#....C.F.G#",
       "#.........#",
       "###########"
     ]
   },
   {
-    roomNum: 8, title: "Room 8: The Music Hall Jam", tip: "Pushing 3 blocks at once opens a shortcut!",
-    floorTheme: "#24293d", floorAlt: "#1d2133", wallColor: "#3b4461", furnColor: "#2980b9", grid: [
+    roomNum: 8, title: "Room 8: The Music Room Jam", tip: "Piano and amp cabinets (F) block the center.",
+    floorTheme: "#24293d", floorAlt: "#1d2133", wallColor: "#3b4461", wallPattern: "brick", grid: [
       "###########",
-      "#.........#",
-      "#.E.BBB.B.#",
-      "#...B.R.B.#",
-      "#.B.BBB.B.#",
-      "#...B.....D",
+      "#....F....#",
+      "#.E.SBC.S.#",
+      "#...F.R.B.#",
+      "#.B.FFF.C.#",
+      "#...S....G#",
       "#.........#",
       "###########"
     ]
   },
   {
-    roomNum: 9, title: "Room 9: The Arcade Gauntlet", tip: "Red decoy balls litter the path to the exit.",
-    floorTheme: "#3d242c", floorAlt: "#321d24", wallColor: "#613b46", furnColor: "#e84393", grid: [
+    roomNum: 9, title: "Room 9: The Laundry Room Heap", tip: "Shirts, pants, and boots piled high!",
+    floorTheme: "#3d242c", floorAlt: "#321d24", wallColor: "#613b46", wallPattern: "wallpaper", grid: [
       "###########",
-      "#...###...#",
-      "#.E..BBB..#",
-      "#..R.B.B..#",
-      "#....B.R..#",
-      "#..BBB..B.D",
+      "#...FFF...#",
+      "#.E..CBB..#",
+      "#..R.S.F..#",
+      "#....C.R..#",
+      "#..SBC..F.G#",
       "#.........#",
       "###########"
     ]
   },
   {
-    roomNum: 10, title: "Room 10: The Workshop Tightrope", tip: "Carefully push workbench blocks without trapping yourself.",
-    floorTheme: "#3d3624", floorAlt: "#322c1d", wallColor: "#61543b", furnColor: "#f1c40f", grid: [
+    roomNum: 10, title: "Room 10: The Workshop Bench", tip: "Workbenches (F) are bolted down! Push supply boxes around them.",
+    floorTheme: "#3d3624", floorAlt: "#322c1d", wallColor: "#61543b", wallPattern: "wood", grid: [
       "###########",
-      "#.........#",
-      "#.E.BBB.B.#",
-      "#...B.BBB.#",
-      "#.B.R..B..#",
-      "#...BB.B..D",
+      "#...F.....#",
+      "#.E.SBC.B.#",
+      "#...F.FFF.#",
+      "#.B.R..S..#",
+      "#...CB.F.G#",
       "#.........#",
       "###########"
     ]
   },
   {
-    roomNum: 11, title: "Room 11: The Botanical Nursery", tip: "Dense fern crates require precise multi-pushes.",
-    floorTheme: "#253d24", floorAlt: "#1e331d", wallColor: "#3d613b", furnColor: "#2ecc71", grid: [
+    roomNum: 11, title: "Room 11: The Mudroom Bench", tip: "Rain boots and winter coats everywhere!",
+    floorTheme: "#253d24", floorAlt: "#1e331d", wallColor: "#3d613b", wallPattern: "brick", grid: [
       "###########",
-      "#...###...#",
-      "#.E.BBB.B.#",
-      "#...BB.B..#",
-      "#.B..R.B..#",
-      "#....BBB..D",
+      "#...FFF...#",
+      "#.E.SBC.B.#",
+      "#...FF.S..#",
+      "#.S..R.C..#",
+      "#....SBB.G#",
       "#.........#",
       "###########"
     ]
   },
   {
-    roomNum: 12, title: "Room 12: The Observatory Chamber", tip: "Traps everywhere! Plan your route step by step.",
-    floorTheme: "#24253d", floorAlt: "#1d1e33", wallColor: "#3b3d61", furnColor: "#3498db", grid: [
+    roomNum: 12, title: "Room 12: The Attic Vault", tip: "Old wardrobe trunks (F) seal the center.",
+    floorTheme: "#24253d", floorAlt: "#1d1e33", wallColor: "#3b3d61", wallPattern: "wood", grid: [
       "###########",
-      "#.........#",
-      "#.E.BBB.B.#",
-      "#...BBB.R.#",
-      "#.B.B.B.B.#",
-      "#....BBB..D",
+      "#....F....#",
+      "#.E.SBC.B.#",
+      "#...FFF.R.#",
+      "#.B.F.S.B.#",
+      "#....CBB.G#",
       "#.........#",
       "###########"
     ]
   },
   {
-    roomNum: 13, title: "Room 13: The Grand Ballroom Floor", tip: "Multiple red decoy balls guard the doorway.",
-    floorTheme: "#3d2438", floorAlt: "#321d2e", wallColor: "#613b58", furnColor: "#9b59b6", grid: [
+    roomNum: 13, title: "Room 13: The Master Bedroom Closet", tip: "Navigate around dressers and shoe racks.",
+    floorTheme: "#3d2438", floorAlt: "#321d2e", wallColor: "#613b58", wallPattern: "wallpaper", grid: [
       "###########",
-      "#...###...#",
-      "#.E.BBB.B.#",
-      "#..R.BBB..#",
-      "#.B.B.B.R.#",
-      "#....BBB..D",
+      "#...FFF...#",
+      "#.E.SBC.B.#",
+      "#..R.FFF..#",
+      "#.S.F.S.R.#",
+      "#....CBB.G#",
       "#.........#",
       "###########"
     ]
   },
   {
-    roomNum: 14, title: "Room 14: The Steel Vault Passage", tip: "The toughest doorway puzzle yet!",
-    floorTheme: "#2c2c2c", floorAlt: "#222222", wallColor: "#4a4a4a", furnColor: "#7f8c8d", grid: [
+    roomNum: 14, title: "Room 14: The Garage Storage", tip: "Tool chests (F) and heavy boxes challenge Elvis!",
+    floorTheme: "#2c2c2c", floorAlt: "#222222", wallColor: "#4a4a4a", wallPattern: "brick", grid: [
       "###########",
-      "#.........#",
-      "#.E.BBB.B.#",
-      "#...BBB.B.#",
-      "#.B.B.B.B.#",
-      "#...BBB.R.D",
+      "#...F.....#",
+      "#.E.SBC.B.#",
+      "#...FFF.S.#",
+      "#.S.F.C.B.#",
+      "#...SBB.R.G",
       "#.........#",
       "###########"
     ]
   },
   {
-    roomNum: 15, title: "Room 15: The Backyard Toy Haven", tip: "THE TATTERED GREEN BALL IS HERE! Avoid the red decoys & push to victory!",
-    floorTheme: "#223d1d", floorAlt: "#1b3317", wallColor: "#376130", furnColor: "#95a5a6", isFinal: true, grid: [
+    roomNum: 15, title: "Room 15: The Backyard Deck & Shed", tip: "THE FINAL ROOM! The green ball is sitting right by the garden shed!",
+    floorTheme: "#223d1d", floorAlt: "#1b3317", wallColor: "#376130", wallPattern: "wood", isFinal: true, grid: [
       "############",
-      "#..........#",
-      "#.E.BBB..B.#",
-      "#..BBB.BBB.#",
-      "#...B.R.B..#",
-      "#..BBB.R.B.#",
+      "#....F.....#",
+      "#.E.SBC..B.#",
+      "#..FFF.SBC.#",
+      "#...S.R.B..#",
+      "#..SBC.R.F.#",
       "#.....G....#",
       "############"
     ]
@@ -968,16 +951,16 @@ class ElvisGame {
     if (nx < 0 || nx >= this.cols || ny < 0 || ny >= this.rows) return;
 
     const target = this.map[ny][nx];
-    if (target === '#') return; // Wall
+    if (target === '#' || target === 'F') return; // Wall or Fixed Unmovable Furniture!
 
     // Step onto Red Decoy Ball! (+5 Penalty Moves!)
     if (target === 'R') {
       this.saveStateSnapshot();
-      this.map[ny][nx] = '.'; // Remove ball
+      this.map[ny][nx] = '.';
       this.addPawTrail(this.elvis.x, this.elvis.y);
       this.elvis.x = nx;
       this.elvis.y = ny;
-      this.moves += 6; // 1 move + 5 penalty moves!
+      this.moves += 6; // 1 move + 5 penalty moves
       document.getElementById('hud-moves').innerText = this.moves;
 
       this.sound.playWrongBall();
@@ -985,15 +968,15 @@ class ElvisGame {
       return;
     }
 
-    // MULTI-BLOCK PUSH MECHANIC (Push a line of 1, 2, or N blocks simultaneously!)
+    // MULTI-PUSH MECHANIC (Supports Box 'B', Shoe 'S', Clothes 'C')
     let chain = [];
     let currX = nx;
     let currY = ny;
 
     while (currX >= 0 && currX < this.cols && currY >= 0 && currY < this.rows) {
       const t = this.map[currY][currX];
-      if (t === 'B') {
-        chain.push({x: currX, y: currY});
+      if (t === 'B' || t === 'S' || t === 'C') {
+        chain.push({x: currX, y: currY, type: t});
         currX += dx;
         currY += dy;
       } else {
@@ -1002,20 +985,18 @@ class ElvisGame {
     }
 
     if (chain.length > 0) {
-      // Check tile immediately after the chain of blocks
       if (currX >= 0 && currX < this.cols && currY >= 0 && currY < this.rows) {
         const endTile = this.map[currY][currX];
         if (endTile === '.' || endTile === 'R') {
           this.saveStateSnapshot();
 
-          // Shift all blocks in the chain forward by 1 step (from back to front)
+          // Shift chain forward
           for (let i = chain.length - 1; i >= 0; i--) {
-            const b = chain[i];
-            this.map[b.y + dy][b.x + dx] = 'B';
+            const item = chain[i];
+            this.map[item.y + dy][item.x + dx] = item.type;
           }
           this.map[ny][nx] = '.';
 
-          // If pushed block crushed a red decoy ball
           if (endTile === 'R') {
             this.sound.playWrongBall();
             this.addPenaltyText("RED BALL CRUSHED!", currX * this.tileSize + this.tileSize/2, currY * this.tileSize + this.tileSize/2);
@@ -1032,25 +1013,10 @@ class ElvisGame {
           return;
         }
       }
-      return; // Chain blocked at end
+      return; // Chain blocked
     }
 
-    // Doorway reached
-    if (target === 'D') {
-      this.saveStateSnapshot();
-      this.addPawTrail(this.elvis.x, this.elvis.y);
-      this.elvis.x = nx;
-      this.elvis.y = ny;
-      this.moves++;
-      document.getElementById('hud-moves').innerText = this.moves;
-
-      this.recordScore();
-      this.sound.playDoorWin();
-      this.showWinModal(false);
-      return;
-    }
-
-    // Tattered Green Ball reached! (Final Victory in Room 15)
+    // Green Ball Reached!
     if (target === 'G') {
       this.saveStateSnapshot();
       this.addPawTrail(this.elvis.x, this.elvis.y);
@@ -1061,11 +1027,11 @@ class ElvisGame {
 
       this.recordScore();
       this.sound.playFanfare();
-      this.showWinModal(true);
+      this.showWinModal(this.currentLevelIdx === GAME_LEVELS.length - 1);
       return;
     }
 
-    // Normal floor step
+    // Normal floor move
     if (target === '.') {
       this.saveStateSnapshot();
       this.addPawTrail(this.elvis.x, this.elvis.y);
@@ -1112,9 +1078,9 @@ class ElvisGame {
       body.innerText = `HAPPY WOOF! Elvis found his beloved tattered green ball after clearing all 15 rooms! Total moves: ${this.moves}.`;
       btn.innerText = "View Leaderboard & Play Again 🐾";
     } else {
-      icon.innerText = '🚪✨';
+      icon.innerText = '🎾✨';
       title.innerText = `Room ${this.currentLevelIdx + 1} Cleared!`;
-      body.innerText = `Elvis trotted happily into Room ${this.currentLevelIdx + 2}!`;
+      body.innerText = `WOOF! Elvis found his green ball and trotted into Room ${this.currentLevelIdx + 2}!`;
       btn.innerText = "Next Room 🐾";
     }
 
@@ -1172,7 +1138,7 @@ class ElvisGame {
   resetModalMarkup() {
     const card = document.getElementById('modalCard');
     card.innerHTML = `
-      <div class="modal-icon" id="modalIcon">🎉</div>
+      <div class="modal-icon" id="modalIcon">🎾</div>
       <h2 class="modal-title" id="modalTitle">Room Cleared!</h2>
       <p class="modal-body" id="modalBody">Elvis trotted into the next room!</p>
       <button class="primary-action-btn" id="modalBtn">Next Room 🐾</button>
@@ -1257,7 +1223,7 @@ class ElvisGame {
     const lvl = GAME_LEVELS[this.currentLevelIdx];
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-    // Render Map
+    // Render Map Tiles
     for (let r = 0; r < this.rows; r++) {
       for (let c = 0; c < this.cols; c++) {
         const x = c * this.tileSize;
@@ -1265,13 +1231,8 @@ class ElvisGame {
         const tile = this.map[r][c];
 
         if (tile === '#') {
-          // Wall
-          this.ctx.fillStyle = lvl.wallColor;
-          this.ctx.fillRect(x, y, this.tileSize, this.tileSize);
-          this.ctx.fillStyle = 'rgba(255,255,255,0.08)';
-          this.ctx.fillRect(x, y, this.tileSize, 4);
-          this.ctx.fillStyle = 'rgba(0,0,0,0.3)';
-          this.ctx.fillRect(x, y + this.tileSize - 4, this.tileSize, 4);
+          // Nice Wall Rendering with Patterning & Crown Molding
+          this.drawWall(x, y, lvl);
         } else {
           // Floor
           const alt = (r + c) % 2 === 0;
@@ -1283,12 +1244,27 @@ class ElvisGame {
           this.ctx.strokeRect(x, y, this.tileSize, this.tileSize);
         }
 
-        // Exit Door
-        if (tile === 'D') {
-          this.drawDoorway(x, y);
+        // Fixed Unmovable Furniture (Sofa/Wardrobe/Counter)
+        if (tile === 'F') {
+          this.drawFixedFurniture(x, y, lvl);
         }
 
-        // Tattered Green Ball (Goal)
+        // Pushable Cardboard Box
+        if (tile === 'B') {
+          this.drawBox(x, y);
+        }
+
+        // Pushable Shoe / Sneaker
+        if (tile === 'S') {
+          this.drawShoe(x, y);
+        }
+
+        // Pushable Clothes Pile
+        if (tile === 'C') {
+          this.drawClothes(x, y);
+        }
+
+        // Tattered Green Ball (Goal in EVERY room!)
         if (tile === 'G') {
           this.drawGreenBall(x, y);
         }
@@ -1296,11 +1272,6 @@ class ElvisGame {
         // Red Decoy Ball (Penalty Trap)
         if (tile === 'R') {
           this.drawRedDecoyBall(x, y);
-        }
-
-        // Furniture Box
-        if (tile === 'B') {
-          this.drawFurniture(x, y, lvl);
         }
       }
     }
@@ -1335,23 +1306,149 @@ class ElvisGame {
     }
   }
 
-  drawDoorway(x, y) {
+  drawWall(x, y, lvl) {
+    this.ctx.fillStyle = lvl.wallColor;
+    this.ctx.fillRect(x, y, this.tileSize, this.tileSize);
+
+    // Decorative wall texture pattern
+    this.ctx.fillStyle = 'rgba(255,255,255,0.06)';
+    if (lvl.wallPattern === 'wood') {
+      for (let i = 0; i < this.tileSize; i += 12) {
+        this.ctx.fillRect(x, y + i, this.tileSize, 2);
+      }
+    } else if (lvl.wallPattern === 'brick') {
+      for (let i = 0; i < this.tileSize; i += 14) {
+        this.ctx.fillRect(x, y + i, this.tileSize, 2);
+        this.ctx.fillRect(x + (i%28), y + i, 2, 14);
+      }
+    } else {
+      // Wallpaper diamonds
+      const s = this.tileSize / 2;
+      this.ctx.beginPath();
+      this.ctx.moveTo(x + s, y);
+      this.ctx.lineTo(x + this.tileSize, y + s);
+      this.ctx.lineTo(x + s, y + this.tileSize);
+      this.ctx.lineTo(x, y + s);
+      this.ctx.fill();
+    }
+
+    // Crown molding top trim
+    this.ctx.fillStyle = 'rgba(255,255,255,0.18)';
+    this.ctx.fillRect(x, y, this.tileSize, 4);
+
+    // Baseboard bottom shadow
+    this.ctx.fillStyle = 'rgba(0,0,0,0.35)';
+    this.ctx.fillRect(x, y + this.tileSize - 4, this.tileSize, 4);
+  }
+
+  drawFixedFurniture(x, y, lvl) {
     const pad = 3;
     const w = this.tileSize - pad * 2;
     const h = this.tileSize - pad * 2;
+    const bx = x + pad;
+    const by = y + pad;
 
-    this.ctx.fillStyle = '#ffa502';
-    this.ctx.fillRect(x + pad, y + pad, w, h);
+    // Heavy Cast Shadow
+    this.ctx.fillStyle = 'rgba(0,0,0,0.45)';
+    this.ctx.fillRect(bx + 4, by + 5, w, h);
+
+    // Dark Mahogany/Leather Sofa Base
+    this.ctx.fillStyle = '#2c1e13';
+    this.ctx.fillRect(bx, by, w, h);
+
+    // Cushion texture
+    this.ctx.fillStyle = '#422e1d';
+    this.ctx.fillRect(bx + 4, by + 4, w - 8, h - 8);
+
+    // Fixed Armrest ridges
+    this.ctx.strokeStyle = '#5a4029';
+    this.ctx.lineWidth = 2.5;
+    this.ctx.strokeRect(bx + 2, by + 2, w - 4, h - 4);
+
+    // "FIXED" label lock icon indicator
+    this.ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    this.ctx.font = `${Math.floor(this.tileSize * 0.28)}px sans-serif`;
+    this.ctx.textAlign = 'center';
+    this.ctx.textBaseline = 'middle';
+    this.ctx.fillText('🛋️', bx + w/2, by + h/2);
+  }
+
+  drawBox(x, y) {
+    const pad = 4;
+    const w = this.tileSize - pad * 2;
+    const h = this.tileSize - pad * 2;
+    const bx = x + pad;
+    const by = y + pad;
+
+    this.ctx.fillStyle = 'rgba(0,0,0,0.3)';
+    this.ctx.fillRect(bx + 3, by + 4, w, h);
+
+    // Cardboard Brown
+    this.ctx.fillStyle = '#d35400';
+    this.ctx.fillRect(bx, by, w, h);
+
+    this.ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+    this.ctx.lineWidth = 2;
+    this.ctx.strokeRect(bx, by, w, h);
+
+    // Tape line across box
+    this.ctx.fillStyle = '#f39c12';
+    this.ctx.fillRect(bx + w * 0.35, by, w * 0.3, h);
+  }
+
+  drawShoe(x, y) {
+    const pad = 4;
+    const w = this.tileSize - pad * 2;
+    const h = this.tileSize - pad * 2;
+    const bx = x + pad;
+    const by = y + pad;
+
+    this.ctx.fillStyle = 'rgba(0,0,0,0.25)';
+    this.ctx.beginPath();
+    this.ctx.ellipse(bx + w/2, by + h/2 + 3, w*0.45, h*0.35, 0, 0, Math.PI * 2);
+    this.ctx.fill();
+
+    // Red Sneaker Base
+    this.ctx.fillStyle = '#e74c3c';
+    this.ctx.beginPath();
+    this.ctx.ellipse(bx + w/2, by + h/2, w*0.42, h*0.32, -0.2, 0, Math.PI * 2);
+    this.ctx.fill();
+
+    // White Rubber Sole & Laces
+    this.ctx.fillStyle = '#ecf0f1';
+    this.ctx.fillRect(bx + w*0.2, by + h*0.65, w*0.6, h*0.18);
 
     this.ctx.strokeStyle = '#fff';
     this.ctx.lineWidth = 2;
-    this.ctx.strokeRect(x + pad + 2, y + pad + 2, w - 4, h - 4);
+    this.ctx.beginPath();
+    this.ctx.moveTo(bx + w*0.35, by + h*0.35);
+    this.ctx.lineTo(bx + w*0.65, by + h*0.35);
+    this.ctx.stroke();
+  }
 
-    this.ctx.fillStyle = '#221a0a';
-    this.ctx.font = `bold ${Math.floor(this.tileSize * 0.32)}px Fredoka`;
-    this.ctx.textAlign = 'center';
-    this.ctx.textBaseline = 'middle';
-    this.ctx.fillText('EXIT ➔', x + this.tileSize / 2, y + this.tileSize / 2);
+  drawClothes(x, y) {
+    const pad = 4;
+    const w = this.tileSize - pad * 2;
+    const h = this.tileSize - pad * 2;
+    const bx = x + pad;
+    const by = y + pad;
+
+    this.ctx.fillStyle = 'rgba(0,0,0,0.25)';
+    this.ctx.beginPath();
+    this.ctx.arc(bx + w/2, by + h/2 + 2, w*0.4, 0, Math.PI * 2);
+    this.ctx.fill();
+
+    // Blue Hoodie / Shirt Fold
+    this.ctx.fillStyle = '#3498db';
+    this.ctx.beginPath();
+    this.ctx.arc(bx + w/2, by + h/2, w*0.38, 0, Math.PI * 2);
+    this.ctx.fill();
+
+    // Secondary folded sleeve (Purple)
+    this.ctx.fillStyle = '#9b59b6';
+    this.ctx.beginPath();
+    this.ctx.arc(bx + w*0.38, by + h*0.45, w*0.22, 0, Math.PI * 2);
+    this.ctx.fill();
   }
 
   drawGreenBall(x, y) {
@@ -1375,7 +1472,7 @@ class ElvisGame {
     this.ctx.arc(cx, cy, rad, 0, Math.PI * 2);
     this.ctx.fill();
 
-    // Worn / Tattered stitches
+    // Worn stitches
     this.ctx.strokeStyle = '#20bf6b';
     this.ctx.lineWidth = 2.5;
     this.ctx.beginPath();
@@ -1394,13 +1491,11 @@ class ElvisGame {
     const cy = y + this.tileSize / 2;
     const rad = this.tileSize * 0.28;
 
-    // Shadow
     this.ctx.fillStyle = 'rgba(0,0,0,0.25)';
     this.ctx.beginPath();
     this.ctx.ellipse(cx, y + this.tileSize * 0.8, rad, rad * 0.35, 0, 0, Math.PI * 2);
     this.ctx.fill();
 
-    // Red Ball Gradient
     const grad = this.ctx.createRadialGradient(cx - rad * 0.3, cy - rad * 0.3, rad * 0.1, cx, cy, rad);
     grad.addColorStop(0, '#ff7675');
     grad.addColorStop(0.8, '#d63031');
@@ -1410,7 +1505,6 @@ class ElvisGame {
     this.ctx.arc(cx, cy, rad, 0, Math.PI * 2);
     this.ctx.fill();
 
-    // Danger symbol or cross on decoy ball
     this.ctx.strokeStyle = '#fff';
     this.ctx.lineWidth = 1.5;
     this.ctx.beginPath();
@@ -1419,29 +1513,6 @@ class ElvisGame {
     this.ctx.moveTo(cx + 3, cy - 3);
     this.ctx.lineTo(cx - 3, cy + 3);
     this.ctx.stroke();
-  }
-
-  drawFurniture(x, y, lvl) {
-    const pad = 4;
-    const w = this.tileSize - pad * 2;
-    const h = this.tileSize - pad * 2;
-    const bx = x + pad;
-    const by = y + pad;
-
-    this.ctx.fillStyle = 'rgba(0,0,0,0.3)';
-    this.ctx.fillRect(bx + 3, by + 4, w, h);
-
-    this.ctx.fillStyle = lvl.furnColor;
-    this.ctx.fillRect(bx, by, w, h);
-
-    this.ctx.strokeStyle = 'rgba(255,255,255,0.25)';
-    this.ctx.lineWidth = 2;
-    this.ctx.strokeRect(bx, by, w, h);
-
-    this.ctx.fillStyle = 'rgba(0,0,0,0.18)';
-    this.ctx.fillRect(bx + w * 0.15, by + h * 0.15, w * 0.7, h * 0.7);
-    this.ctx.fillStyle = lvl.furnColor;
-    this.ctx.fillRect(bx + w * 0.25, by + h * 0.25, w * 0.5, h * 0.5);
   }
 
   drawElvis(x, y) {
