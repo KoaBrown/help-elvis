@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-select=no">
+<title>Help Elvis Find His Ball 🐶🎾</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-dark: #18151f;
+    --bg-card: #231f2d;
+    --bg-card-border: #383247;
+    --text-main: #fcf9f2;
+    --text-muted: #a39bb0;
+    --accent-red: #ff4757;
+    --accent-red-glow: rgba(255, 71, 87, 0.45);
+    --gold: #ffa502;
+    --gold-glow: rgba(255, 165, 2, 0.4);
+    --green: #2ed573;
+    --blue: #1e90ff;
+    --elvis-fur: #e5a65e;
+    --elvis-dark: #8c531b;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+
+  body {
+    background: var(--bg-dark);
+    color: var(--text-main);
+    font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    overflow-x: hidden;
+    background-image:
+      radial-gradient(circle at 15% 15%, rgba(255, 165, 2, 0.05) 0%, transparent 40%),
+      radial-gradient(circle at 85% 85%, rgba(255, 71, 87, 0.05) 0%, transparent 40%);
+  }
+
+  #app {
+    width: 100%;
+    max-width: 680px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  /* Top Navigation Bar */
+  header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--bg-card);
+    border: 2px solid var(--bg-card-border);
+    border-radius: 18px;
+    padding: 10px 18px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .avatar-badge {
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, #ffa502, #ff4757);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    box-shadow: 0 4px 12px var(--accent-red-glow);
+    border: 2px solid rgba(255,255,255,0.2);
+  }
+
+  .title-group h1 {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .title-group p {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  .hud-stats {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .stat-chip {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--bg-card-border);
+    border-radius: 12px;
+    padding: 4px 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 60px;
+  }
+
+  .stat-label {
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+  }
+
+  .stat-val {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--gold);
+  }
+
+  /* Stage Container */
+  .stage-wrapper {
+    position: relative;
+    width: 100%;
+    background: #110e17;
+    border: 3px solid var(--bg-card-border);
+    border-radius: 20px;
+    padding: 12px;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .room-banner {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 8px 10px 8px;
+  }
+
+  .room-title {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .room-goal-tip {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  canvas {
+    display: block;
+    border-radius: 14px;
+    background: #252030;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    touch-action: none;
+  }
+
+  /* Bottom Controls Toolbar */
+  footer {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .keys-legend {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 700;
+  }
+
+  .key-tag {
+    background: var(--bg-card);
+    border: 1px solid var(--bg-card-border);
+    padding: 3px 7px;
+    border-radius: 6px;
+    color: var(--text-main);
+    font-size: 11px;
+    box-shadow: 0 2px 0 var(--bg-card-border);
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 8px;
+  }
+
+  button {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    background: var(--bg-card);
+    color: var(--text-main);
+    border: 2px solid var(--bg-card-border);
+    border-radius: 12px;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  }
+
+  button:hover {
+    background: #322b40;
+    border-color: #4f4663;
+    transform: translateY(-2px);
+  }
+
+  button:active {
+    transform: translateY(1px);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  }
+
+  /* On-Screen D-Pad for Mobile / Touch */
+  .dpad-container {
+    display: none;
+    margin-top: 6px;
+    gap: 6px;
+  }
+
+  @media (max-width: 720px) {
+    .dpad-container {
+      display: grid;
+      grid-template-columns: repeat(3, 56px);
+      grid-template-rows: repeat(3, 48px);
+      gap: 6px;
+      justify-content: center;
+      margin: 8px auto 0 auto;
+    }
+  }
+
+  .dpad-btn {
+    background: var(--bg-card);
+    border: 2px solid var(--bg-card-border);
+    border-radius: 10px;
+    color: var(--text-main);
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  .dpad-up { grid-column: 2; grid-row: 1; }
+  .dpad-left { grid-column: 1; grid-row: 2; }
+  .dpad-down { grid-column: 2; grid-row: 2; }
+  .dpad-right { grid-column: 3; grid-row: 2; }
+
+  /* Modal / Dialog Overlay */
+  .overlay {
+    position: absolute;
+    inset: 12px;
+    background: rgba(18, 14, 25, 0.92);
+    backdrop-filter: blur(8px);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    z-index: 50;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .modal-card {
+    background: var(--bg-card);
+    border: 2px solid var(--bg-card-border);
+    border-radius: 20px;
+    padding: 28px 36px;
+    text-align: center;
+    max-width: 420px;
+    width: 100%;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  @keyframes popIn {
+    0% { transform: scale(0.85); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .modal-icon {
+    font-size: 54px;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
+  }
+
+  .modal-title {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+  }
+
+  .modal-body {
+    font-size: 15px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  .primary-action-btn {
+    background: linear-gradient(135deg, #ff4757, #ff6b81);
+    color: white;
+    border: none;
+    font-size: 16px;
+    padding: 10px 28px;
+    border-radius: 14px;
+    box-shadow: 0 6px 20px var(--accent-red-glow);
+  }
+
+  .primary-action-btn:hover {
+    background: linear-gradient(135deg, #ff2e44, #ff5252);
+    transform: translateY(-2px);
+  }
+</style>
+</head>
+<body>
+
+<div id="app">
+  <header>
+    <div class="brand">
+      <div class="avatar-badge">🐶</div>
+      <div class="title-group">
+        <h1>Help Elvis Find His Ball</h1>
+        <p>Push obstacles out of the way & clear the doorway!</p>
+      </div>
+    </div>
+    <div class="hud-stats">
+      <div class="stat-chip">
+        <span class="stat-label">Room</span>
+        <span class="stat-val" id="hud-room-num">1 / 6</span>
+      </div>
+      <div class="stat-chip">
+        <span class="stat-label">Moves</span>
+        <span class="stat-val" id="hud-moves">0</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="stage-wrapper">
+    <div class="room-banner">
+      <div class="room-title" id="room-banner-title">🛋️ Room 1: The Living Room</div>
+      <div class="room-goal-tip" id="room-banner-tip">Clear a path to the open doorway!</div>
+    </div>
+
+    <canvas id="gameCanvas" width="560" height="560"></canvas>
+
+    <!-- Overlay Dialog for Room Transitions / Win -->
+    <div class="overlay" id="gameOverlay">
+      <div class="modal-card">
+        <div class="modal-icon" id="modalIcon">🎉</div>
+        <h2 class="modal-title" id="modalTitle">Room Cleared!</h2>
+        <p class="modal-body" id="modalBody">Elvis pushed everything out of the way and trotted into the next room!</p>
+        <button class="primary-action-btn" id="modalBtn">Next Room 🐾</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="keys-legend">
+      <span>Move:</span>
+      <span class="key-tag">W A S D</span> or <span class="key-tag">Arrows</span>
+      <span style="margin-left: 8px">Push: Walk into items</span>
+    </div>
+    <div class="action-buttons">
+      <button id="btnSound">🔊 Sound: ON</button>
+      <button id="btnUndo">↩ Undo (Z)</button>
+      <button id="btnReset">🔄 Restart (R)</button>
+    </div>
+  </footer>
+
+  <!-- Touch D-Pad for Mobile -->
+  <div class="dpad-container">
+    <button class="dpad-btn dpad-up" id="padUp">▲</button>
+    <button class="dpad-btn dpad-left" id="padLeft">◀</button>
+    <button class="dpad-btn dpad-down" id="padDown">▼</button>
+    <button class="dpad-btn dpad-right" id="padRight">▶</button>
+  </div>
+</div>
+
+<script>
+/* --- SOUND SYNTHESIZER --- */
+class SoundEngine {
+  constructor() {
+    this.ctx = null;
+    this.enabled = true;
+  }
+
+  init() {
+    if (!this.ctx) {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      this.ctx = new AudioContext();
+    }
+  }
+
+  toggle() {
+    this.enabled = !this.enabled;
+    return this.enabled;
+  }
+
+  playStep() {
+    if (!this.enabled || !this.ctx) return;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(130 + Math.random() * 20, this.ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(50, this.ctx.currentTime + 0.04);
+    gain.gain.setValueAtTime(0.06, this.ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 0.04);
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start();
+    osc.stop(this.ctx.currentTime + 0.045);
+  }
+
+  playPush() {
+    if (!this.enabled || !this.ctx) return;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(90, this.ctx.currentTime);
+    osc.frequency.linearRampToValueAtTime(120, this.ctx.currentTime + 0.08);
+    gain.gain.setValueAtTime(0.14, this.ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 0.08);
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start();
+    osc.stop(this.ctx.currentTime + 0.09);
+  }
+
+  playDoorWin() {
+    if (!this.enabled || !this.ctx) return;
+    const chords = [329.63, 392.00, 523.25, 659.25];
+    chords.forEach((freq, idx) => {
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'triangle';
+      const t = this.ctx.currentTime + idx * 0.07;
+      osc.frequency.setValueAtTime(freq, t);
+      gain.gain.setValueAtTime(0.15, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.36);
+    });
+  }
+
+  playBarkFanfare() {
+    if (!this.enabled || !this.ctx) return;
+    // Cheerful Bark
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(340, this.ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(180, this.ctx.currentTime + 0.16);
+    gain.gain.setValueAtTime(0.25, this.ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.16);
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start();
+    osc.stop(this.ctx.currentTime + 0.17);
+
+    // Fanfare Chimes
+    const notes = [261.63, 329.63, 392.0, 523.25, 659.25, 783.99, 1046.50];
+    notes.forEach((f, i) => {
+      const o = this.ctx.createOscillator();
+      const g = this.ctx.createGain();
+      o.type = 'sine';
+      const t = this.ctx.currentTime + 0.2 + i * 0.08;
+      o.frequency.setValueAtTime(f, t);
+      g.gain.setValueAtTime(0.18, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
+      o.connect(g);
+      g.connect(this.ctx.destination);
+      o.start(t);
+      o.stop(t + 0.55);
+    });
+  }
+}
+
+/* --- GAME LEVELS (6 Progressive Rooms) --- */
+/*
+  # = Wall
+  . = Floor
+  E = Elvis
+  B = Box / Heavy Obstacle (Armchairs, Tables, Planters, Crates)
+  D = Doorway into Next Room
+  * = Elvis's Red Bouncy Ball
+*/
+const GAME_LEVELS = [
+  {
+    roomNum: 1,
+    title: "🛋️ The Living Room",
+    tip: "Help Elvis slide the armchair out of the hallway door!",
+    floorTheme: "#342b42",
+    floorAlt: "#2f273b",
+    wallColor: "#57486e",
+    furnitureColor: "#e67e22",
+    furnitureType: "couch",
+    grid: [
+      "########",
+      "#......#",
+      "#.E....#",
+      "#..B...#",
+      "#......D",
+      "#......#",
+      "#......#",
+      "########"
+    ]
+  },
+  {
+    roomNum: 2,
+    title: "📦 The Front Hallway",
+    tip: "Move the delivery crates to open the path to the kitchen!",
+    floorTheme: "#283747",
+    floorAlt: "#212f3d",
+    wallColor: "#415b76",
+    furnitureColor: "#a0522d",
+    furnitureType: "crate",
+    grid: [
+      "#########",
+      "###...###",
+      "#..E....#",
+      "#.BB....#",
+      "#...B...D",
+      "#.......#",
+      "###...###",
+      "#########"
+    ]
+  },
+  {
+    roomNum: 3,
+    title: "🍳 The Chef's Kitchen",
+    tip: "Pantry bins and barstools are clogging the passage!",
+    floorTheme: "#3e3223",
+    floorAlt: "#362b1d",
+    wallColor: "#69533a",
+    furnitureColor: "#d4a373",
+    furnitureType: "pantry",
+    grid: [
+      "#########",
+      "#.......#",
+      "#..B.B..#",
+      "#.E.B...D",
+      "#..B....#",
+      "#...B...#",
+      "#.......#",
+      "#########"
+    ]
+  },
+  {
+    roomNum: 4,
+    title: "📚 The Grand Study",
+    tip: "Navigate through narrow corridors between solid oak bookshelves!",
+    floorTheme: "#3a2424",
+    floorAlt: "#311e1e",
+    wallColor: "#613b3b",
+    furnitureColor: "#8b4513",
+    furnitureType: "shelf",
+    grid: [
+      "#########",
+      "#...#...#",
+      "#.E.B...#",
+      "#.#.#.#.#",
+      "#...B...#",
+      "#.B.#.B.#",
+      "#...#...D",
+      "#########"
+    ]
+  },
+  {
+    roomNum: 5,
+    title: "🌿 The Sunroom Conservatory",
+    tip: "Carefully push the heavy terracotta planters towards the garden!",
+    floorTheme: "#233d2f",
+    floorAlt: "#1c3226",
+    wallColor: "#39654d",
+    furnitureColor: "#27ae60",
+    furnitureType: "planter",
+    grid: [
+      "##########",
+      "#........#",
+      "#.E.BB...#",
+      "#...##...#",
+      "#.B....B.#",
+      "#...BB...D",
+      "#........#",
+      "##########"
+    ]
+  },
+  {
+    roomNum: 6,
+    title: "🏡 The Backyard Garden",
+    tip: "THE FINAL ROOM! Elvis can see his favorite red bouncy ball!",
+    floorTheme: "#2d4421",
+    floorAlt: "#263a1c",
+    wallColor: "#476b34",
+    furnitureColor: "#7f8c8d",
+    furnitureType: "rock",
+    isFinal: true,
+    grid: [
+      "##########",
+      "#........#",
+      "#.E.B..B.#",
+      "#..BB.BB.#",
+      "#...B.B..#",
+      "#..B...B.#",
+      "#....*...#",
+      "##########"
+    ]
+  }
+];
+
+/* --- MAIN ENGINE --- */
+class ElvisGame {
+  constructor() {
+    this.canvas = document.getElementById('gameCanvas');
+    this.ctx = this.canvas.getContext('2d');
+    this.sound = new SoundEngine();
+
+    this.currentLevelIdx = 0;
+    this.history = [];
+    this.moves = 0;
+    this.elvis = { x: 0, y: 0, facing: 'right', tailAngle: 0, tailDir: 1, walkFrame: 0 };
+    this.map = [];
+    this.rows = 0;
+    this.cols = 0;
+    this.tileSize = 56;
+    this.particles = [];
+    this.pawTrails = [];
+    this.isLevelWon = false;
+    this.ballWobble = 0;
+
+    this.initLevel(0);
+    this.bindControls();
+
+    // Start Main Loop
+    this.lastTime = performance.now();
+    this.loop = this.loop.bind(this);
+    requestAnimationFrame(this.loop);
+  }
+
+  initLevel(idx) {
+    this.currentLevelIdx = idx;
+    const lvl = GAME_LEVELS[idx];
+
+    document.getElementById('hud-room-num').innerText = `${lvl.roomNum} / ${GAME_LEVELS.length}`;
+    document.getElementById('room-banner-title').innerText = lvl.title;
+    document.getElementById('room-banner-tip').innerText = lvl.tip;
+    document.getElementById('hud-moves').innerText = '0';
+
+    this.moves = 0;
+    this.history = [];
+    this.isLevelWon = false;
+    this.particles = [];
+    this.pawTrails = [];
+
+    this.rows = lvl.grid.length;
+    this.cols = lvl.grid[0].length;
+
+    // Adapt tile size to fit canvas cleanly
+    const maxDim = Math.max(this.rows, this.cols);
+    this.tileSize = Math.floor(540 / maxDim);
+    this.canvas.width = this.cols * this.tileSize;
+    this.canvas.height = this.rows * this.tileSize;
+
+    // Parse Grid
+    this.map = [];
+    for (let r = 0; r < this.rows; r++) {
+      const row = [];
+      for (let c = 0; c < this.cols; c++) {
+        const char = lvl.grid[r][c];
+        if (char === 'E') {
+          this.elvis.x = c;
+          this.elvis.y = r;
+          row.push('.');
+        } else {
+          row.push(char);
+        }
+      }
+      this.map.push(row);
+    }
+  }
+
+  bindControls() {
+    window.addEventListener('keydown', (e) => {
+      this.sound.init();
+      if (this.isLevelWon) return;
+
+      let dx = 0, dy = 0;
+      if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') { dy = -1; this.elvis.facing = 'up'; }
+      else if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') { dy = 1; this.elvis.facing = 'down'; }
+      else if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') { dx = -1; this.elvis.facing = 'left'; }
+      else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') { dx = 1; this.elvis.facing = 'right'; }
+      else if (e.key === 'z' || e.key === 'Z') { this.undo(); return; }
+      else if (e.key === 'r' || e.key === 'R') { this.initLevel(this.currentLevelIdx); return; }
+
+      if (dx !== 0 || dy !== 0) {
+        e.preventDefault();
+        this.stepMove(dx, dy);
+      }
+    });
+
+    // Touch D-Pad handlers
+    const setupDpad = (btnId, dx, dy, facing) => {
+      const btn = document.getElementById(btnId);
+      btn.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        this.sound.init();
+        if (this.isLevelWon) return;
+        this.elvis.facing = facing;
+        this.stepMove(dx, dy);
+      });
+    };
+
+    setupDpad('padUp', 0, -1, 'up');
+    setupDpad('padDown', 0, 1, 'down');
+    setupDpad('padLeft', -1, 0, 'left');
+    setupDpad('padRight', 1, 0, 'right');
+
+    document.getElementById('btnUndo').onclick = () => { this.sound.init(); this.undo(); };
+    document.getElementById('btnReset').onclick = () => { this.sound.init(); this.initLevel(this.currentLevelIdx); };
+
+    const soundBtn = document.getElementById('btnSound');
+    soundBtn.onclick = () => {
+      this.sound.init();
+      const on = this.sound.toggle();
+      soundBtn.innerText = on ? '🔊 Sound: ON' : '🔇 Sound: OFF';
+    };
+
+    document.getElementById('modalBtn').onclick = () => {
+      document.getElementById('gameOverlay').classList.remove('active');
+      if (this.currentLevelIdx < GAME_LEVELS.length - 1) {
+        this.initLevel(this.currentLevelIdx + 1);
+      } else {
+        this.initLevel(0); // Restart from Room 1
+      }
+    };
+  }
+
+  saveSnapshot() {
+    this.history.push({
+      map: this.map.map(r => [...r]),
+      elvis: { ...this.elvis },
+      moves: this.moves
+    });
+  }
+
+  undo() {
+    if (this.history.length === 0) return;
+    const snap = this.history.pop();
+    this.map = snap.map;
+    this.elvis = snap.elvis;
+    this.moves = snap.moves;
+    document.getElementById('hud-moves').innerText = this.moves;
+  }
+
+  stepMove(dx, dy) {
+    const nx = this.elvis.x + dx;
+    const ny = this.elvis.y + dy;
+
+    if (nx < 0 || nx >= this.cols || ny < 0 || ny >= this.rows) return;
+
+    const targetTile = this.map[ny][nx];
+
+    // Blocked by wall
+    if (targetTile === '#') return;
+
+    // Push obstacle
+    if (targetTile === 'B') {
+      const bx = nx + dx;
+      const by = ny + dy;
+
+      if (bx >= 0 && bx < this.cols && by >= 0 && by < this.rows) {
+        const behindTile = this.map[by][bx];
+        if (behindTile === '.') {
+          this.saveSnapshot();
+          this.map[ny][nx] = '.';
+          this.map[by][bx] = 'B';
+
+          this.addPawTrail(this.elvis.x, this.elvis.y);
+          this.elvis.x = nx;
+          this.elvis.y = ny;
+          this.moves++;
+          document.getElementById('hud-moves').innerText = this.moves;
+
+          this.sound.playPush();
+          this.emitDust(bx * this.tileSize + this.tileSize/2, by * this.tileSize + this.tileSize/2);
+          return;
+        }
+      }
+      return; // Obstructed
+    }
+
+    // Doorway exit reached
+    if (targetTile === 'D') {
+      this.saveSnapshot();
+      this.addPawTrail(this.elvis.x, this.elvis.y);
+      this.elvis.x = nx;
+      this.elvis.y = ny;
+      this.moves++;
+      document.getElementById('hud-moves').innerText = this.moves;
+      this.sound.playDoorWin();
+      this.showWinModal(false);
+      return;
+    }
+
+    // Ball reached! (Room 6 final victory)
+    if (targetTile === '*') {
+      this.saveSnapshot();
+      this.addPawTrail(this.elvis.x, this.elvis.y);
+      this.elvis.x = nx;
+      this.elvis.y = ny;
+      this.moves++;
+      document.getElementById('hud-moves').innerText = this.moves;
+      this.sound.playBarkFanfare();
+      this.showWinModal(true);
+      return;
+    }
+
+    // Regular floor step
+    if (targetTile === '.') {
+      this.saveSnapshot();
+      this.addPawTrail(this.elvis.x, this.elvis.y);
+      this.elvis.x = nx;
+      this.elvis.y = ny;
+      this.moves++;
+      document.getElementById('hud-moves').innerText = this.moves;
+      this.sound.playStep();
+    }
+  }
+
+  showWinModal(isFinal) {
+    this.isLevelWon = true;
+    const overlay = document.getElementById('gameOverlay');
+    const icon = document.getElementById('modalIcon');
+    const title = document.getElementById('modalTitle');
+    const body = document.getElementById('modalBody');
+    const btn = document.getElementById('modalBtn');
+
+    if (isFinal) {
+      icon.innerText = '🎾🐶💖';
+      title.innerText = "Elvis Found His Ball!";
+      body.innerText = `WOOF! Elvis is super happy! You completed all 6 rooms and retrieved the red ball in ${this.moves} moves!`;
+      btn.innerText = "Play Again From Room 1 🐾";
+    } else {
+      icon.innerText = '🚪✨';
+      title.innerText = "Doorway Unlocked!";
+      body.innerText = `Elvis trotted through the open doorway into ${GAME_LEVELS[this.currentLevelIdx + 1].title}!`;
+      btn.innerText = "Enter Next Room 🐾";
+    }
+
+    // Confetti burst
+    for (let i = 0; i < 50; i++) {
+      this.particles.push({
+        x: this.canvas.width / 2,
+        y: this.canvas.height / 2,
+        vx: (Math.random() - 0.5) * 14,
+        vy: (Math.random() - 0.5) * 14 - 3,
+        color: ['#ff4757', '#ffa502', '#2ed573', '#1e90ff', '#e056fd', '#fffa65'][Math.floor(Math.random()*6)],
+        size: Math.random() * 6 + 4,
+        alpha: 1
+      });
+    }
+
+    setTimeout(() => {
+      overlay.classList.add('active');
+    }, 350);
+  }
+
+  addPawTrail(gx, gy) {
+    this.pawTrails.push({
+      x: gx * this.tileSize + this.tileSize / 2,
+      y: gy * this.tileSize + this.tileSize / 2,
+      alpha: 0.6
+    });
+  }
+
+  emitDust(px, py) {
+    for (let i = 0; i < 10; i++) {
+      this.particles.push({
+        x: px + (Math.random() - 0.5) * 20,
+        y: py + (Math.random() - 0.5) * 20,
+        vx: (Math.random() - 0.5) * 3,
+        vy: (Math.random() - 0.5) * 3,
+        color: '#d4a373',
+        size: Math.random() * 4 + 2,
+        alpha: 0.8
+      });
+    }
+  }
+
+  loop(timestamp) {
+    const dt = timestamp - this.lastTime;
+    this.lastTime = timestamp;
+
+    this.update(dt);
+    this.render();
+
+    requestAnimationFrame(this.loop);
+  }
+
+  update(dt) {
+    // Tail wagging animation
+    this.elvis.tailAngle += 0.15 * this.elvis.tailDir;
+    if (Math.abs(this.elvis.tailAngle) > 0.6) {
+      this.elvis.tailDir *= -1;
+    }
+
+    // Ball bobbing animation
+    this.ballWobble += 0.05;
+
+    // Update Particles
+    for (let i = this.particles.length - 1; i >= 0; i--) {
+      const p = this.particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.2; // gravity
+      p.alpha -= 0.02;
+      if (p.alpha <= 0) this.particles.splice(i, 1);
+    }
+
+    // Fade Paw Trails
+    for (let i = this.pawTrails.length - 1; i >= 0; i--) {
+      const t = this.pawTrails[i];
+      t.alpha -= 0.002;
+      if (t.alpha <= 0) this.pawTrails.splice(i, 1);
+    }
+  }
+
+  render() {
+    const lvl = GAME_LEVELS[this.currentLevelIdx];
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+    // 1. Render Floor & Walls
+    for (let r = 0; r < this.rows; r++) {
+      for (let c = 0; c < this.cols; c++) {
+        const x = c * this.tileSize;
+        const y = r * this.tileSize;
+        const tile = this.map[r][c];
+
+        if (tile === '#') {
+          // Wall / Solid Boundary
+          this.ctx.fillStyle = lvl.wallColor;
+          this.ctx.fillRect(x, y, this.tileSize, this.tileSize);
+
+          // Wall 3D top trim & shadow
+          this.ctx.fillStyle = 'rgba(255,255,255,0.1)';
+          this.ctx.fillRect(x, y, this.tileSize, 4);
+          this.ctx.fillStyle = 'rgba(0,0,0,0.25)';
+          this.ctx.fillRect(x, y + this.tileSize - 4, this.tileSize, 4);
+        } else {
+          // Checkerboard Floor
+          const isAlt = (r + c) % 2 === 0;
+          this.ctx.fillStyle = isAlt ? lvl.floorTheme : lvl.floorAlt;
+          this.ctx.fillRect(x, y, this.tileSize, this.tileSize);
+
+          // Subtle Tile Inset Border
+          this.ctx.strokeStyle = 'rgba(0,0,0,0.06)';
+          this.ctx.lineWidth = 1;
+          this.ctx.strokeRect(x, y, this.tileSize, this.tileSize);
+        }
+
+        // 2. Render Exit Doorway
+        if (tile === 'D') {
+          this.drawDoorway(x, y);
+        }
+
+        // 3. Render Ball
+        if (tile === '*') {
+          this.drawBall(x, y);
+        }
+
+        // 4. Render Furniture / Obstacles
+        if (tile === 'B') {
+          this.drawFurniture(x, y, lvl);
+        }
+      }
+    }
+
+    // 5. Render Paw Trails
+    for (const t of this.pawTrails) {
+      this.ctx.fillStyle = `rgba(0,0,0,${t.alpha * 0.15})`;
+      this.ctx.beginPath();
+      this.ctx.arc(t.x, t.y, 4, 0, Math.PI * 2);
+      this.ctx.fill();
+    }
+
+    // 6. Render Elvis (The Hero Dog)
+    this.drawElvis(this.elvis.x * this.tileSize, this.elvis.y * this.tileSize);
+
+    // 7. Render Floating Particles
+    for (const p of this.particles) {
+      this.ctx.fillStyle = p.color;
+      this.ctx.globalAlpha = p.alpha;
+      this.ctx.beginPath();
+      this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      this.ctx.fill();
+    }
+    this.ctx.globalAlpha = 1;
+  }
+
+  drawDoorway(x, y) {
+    const pad = 3;
+    const w = this.tileSize - pad * 2;
+    const h = this.tileSize - pad * 2;
+
+    // Glowing Golden Door Mat
+    this.ctx.fillStyle = '#ffa502';
+    this.ctx.fillRect(x + pad, y + pad, w, h);
+
+    // Door Frame border
+    this.ctx.strokeStyle = '#fff';
+    this.ctx.lineWidth = 2;
+    this.ctx.strokeRect(x + pad + 2, y + pad + 2, w - 4, h - 4);
+
+    // Exit text
+    this.ctx.fillStyle = '#2c1e05';
+    this.ctx.font = `bold ${Math.floor(this.tileSize * 0.32)}px Fredoka`;
+    this.ctx.textAlign = 'center';
+    this.ctx.textBaseline = 'middle';
+    this.ctx.fillText('EXIT ➔', x + this.tileSize / 2, y + this.tileSize / 2);
+  }
+
+  drawBall(x, y) {
+    const cx = x + this.tileSize / 2;
+    const cy = y + this.tileSize / 2 + Math.sin(this.ballWobble) * 3;
+    const rad = this.tileSize * 0.32;
+
+    // Ball Shadow
+    this.ctx.fillStyle = 'rgba(0,0,0,0.35)';
+    this.ctx.beginPath();
+    this.ctx.ellipse(cx, y + this.tileSize * 0.82, rad * 1.1, rad * 0.4, 0, 0, Math.PI * 2);
+    this.ctx.fill();
+
+    // Red Ball Sphere with 3D gradient
+    const grad = this.ctx.createRadialGradient(cx - rad * 0.3, cy - rad * 0.3, rad * 0.1, cx, cy, rad);
+    grad.addColorStop(0, '#ff7675');
+    grad.addColorStop(0.7, '#d63031');
+    grad.addColorStop(1, '#800000');
+    this.ctx.fillStyle = grad;
+    this.ctx.beginPath();
+    this.ctx.arc(cx, cy, rad, 0, Math.PI * 2);
+    this.ctx.fill();
+
+    // Yellow tennis seam
+    this.ctx.strokeStyle = '#feca57';
+    this.ctx.lineWidth = 2.5;
+    this.ctx.beginPath();
+    this.ctx.arc(cx, cy, rad * 0.7, 0.25 * Math.PI, 0.85 * Math.PI);
+    this.ctx.stroke();
+
+    // Star sparkle
+    this.ctx.fillStyle = 'rgba(255,255,255,0.8)';
+    this.ctx.beginPath();
+    this.ctx.arc(cx - rad * 0.35, cy - rad * 0.35, 3, 0, Math.PI * 2);
+    this.ctx.fill();
+  }
+
+  drawFurniture(x, y, lvl) {
+    const pad = 4;
+    const w = this.tileSize - pad * 2;
+    const h = this.tileSize - pad * 2;
+    const bx = x + pad;
+    const by = y + pad;
+
+    // Furniture Cast Shadow
+    this.ctx.fillStyle = 'rgba(0,0,0,0.3)';
+    this.ctx.fillRect(bx + 3, by + 4, w, h);
+
+    // Main Base Body
+    this.ctx.fillStyle = lvl.furnitureColor;
+    this.ctx.fillRect(bx, by, w, h);
+
+    // Highlight border
+    this.ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+    this.ctx.lineWidth = 2;
+    this.ctx.strokeRect(bx, by, w, h);
+
+    // Detailed Inset Texture according to theme
+    this.ctx.fillStyle = 'rgba(0,0,0,0.15)';
+    this.ctx.fillRect(bx + w * 0.12, by + h * 0.12, w * 0.76, h * 0.76);
+    this.ctx.fillStyle = lvl.furnitureColor;
+    this.ctx.fillRect(bx + w * 0.22, by + h * 0.22, w * 0.56, h * 0.56);
+
+    // Cross-band pattern
+    this.ctx.strokeStyle = 'rgba(0,0,0,0.2)';
+    this.ctx.beginPath();
+    this.ctx.moveTo(bx + w/2, by + 4);
+    this.ctx.lineTo(bx + w/2, by + h - 4);
+    this.ctx.moveTo(bx + 4, by + h/2);
+    this.ctx.lineTo(bx + w - 4, by + h/2);
+    this.ctx.stroke();
+  }
+
+  drawElvis(x, y) {
+    const cx = x + this.tileSize / 2;
+    const cy = y + this.tileSize / 2;
+    const r = this.tileSize * 0.36;
+
+    // 1. Elvis Drop Shadow
+    this.ctx.fillStyle = 'rgba(0,0,0,0.35)';
+    this.ctx.beginPath();
+    this.ctx.ellipse(cx, cy + r * 0.85, r * 1.05, r * 0.45, 0, 0, Math.PI * 2);
+    this.ctx.fill();
+
+    // 2. Wagging Tail
+    const tailX = cx - (this.elvis.facing === 'right' ? r * 0.8 : (this.elvis.facing === 'left' ? -r * 0.8 : 0));
+    const tailY = cy + r * 0.4;
+    this.ctx.save();
+    this.ctx.translate(tailX, tailY);
+    this.ctx.rotate(this.elvis.tailAngle);
+    this.ctx.strokeStyle = '#e5a65e';
+    this.ctx.lineWidth = 5;
+    this.ctx.lineCap = 'round';
+    this.ctx.beginPath();
+    this.ctx.moveTo(0, 0);
+    this.ctx.lineTo(-4, -14);
+    this.ctx.stroke();
+    this.ctx.restore();
+
+    // 3. Golden Hound Body
+    this.ctx.fillStyle = '#e5a65e';
+    this.ctx.beginPath();
+    this.ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    this.ctx.fill();
+
+    // 4. Floppy Ears
+    this.ctx.fillStyle = '#8c531b';
+    if (this.elvis.facing === 'left') {
+      this.ctx.beginPath();
+      this.ctx.ellipse(cx + r * 0.45, cy - r * 0.2, r * 0.35, r * 0.65, 0.35, 0, Math.PI * 2);
+      this.ctx.fill();
+    } else {
+      this.ctx.beginPath();
+      this.ctx.ellipse(cx - r * 0.45, cy - r * 0.2, r * 0.35, r * 0.65, -0.35, 0, Math.PI * 2);
+      this.ctx.fill();
+    }
+
+    // 5. Snout & Directional Facing
+    let noseX = cx, noseY = cy;
+    if (this.elvis.facing === 'right') noseX += r * 0.42;
+    if (this.elvis.facing === 'left') noseX -= r * 0.42;
+    if (this.elvis.facing === 'down') noseY += r * 0.32;
+    if (this.elvis.facing === 'up') noseY -= r * 0.32;
+
+    // Cream Snout Patch
+    this.ctx.fillStyle = '#fff0db';
+    this.ctx.beginPath();
+    this.ctx.arc(noseX, noseY, r * 0.42, 0, Math.PI * 2);
+    this.ctx.fill();
+
+    // Cute Black Nose
+    this.ctx.fillStyle = '#1e1e1e';
+    this.ctx.beginPath();
+    this.ctx.arc(noseX, noseY - 2, r * 0.2, 0, Math.PI * 2);
+    this.ctx.fill();
+
+    // Nose Highlight
+    this.ctx.fillStyle = 'rgba(255,255,255,0.7)';
+    this.ctx.beginPath();
+    this.ctx.arc(noseX - 2, noseY - 4, 2, 0, Math.PI * 2);
+    this.ctx.fill();
+
+    // 6. Eyes
+    if (this.elvis.facing !== 'up') {
+      const eyeOffX = this.elvis.facing === 'right' ? 3 : (this.elvis.facing === 'left' ? -3 : 0);
+      this.ctx.fillStyle = '#111';
+      this.ctx.beginPath();
+      this.ctx.arc(cx - 6 + eyeOffX, cy - 6, 3.5, 0, Math.PI * 2);
+      this.ctx.arc(cx + 6 + eyeOffX, cy - 6, 3.5, 0, Math.PI * 2);
+      this.ctx.fill();
+
+      // Eye glimmer
+      this.ctx.fillStyle = '#fff';
+      this.ctx.beginPath();
+      this.ctx.arc(cx - 7 + eyeOffX, cy - 8, 1.2, 0, Math.PI * 2);
+      this.ctx.arc(cx + 5 + eyeOffX, cy - 8, 1.2, 0, Math.PI * 2);
+      this.ctx.fill();
+    }
+
+    // 7. Red Collar & Golden Tag
+    this.ctx.strokeStyle = '#ff4757';
+    this.ctx.lineWidth = 3.5;
+    this.ctx.beginPath();
+    this.ctx.arc(cx, cy + r * 0.6, r * 0.52, 0.2 * Math.PI, 0.8 * Math.PI);
+    this.ctx.stroke();
+
+    this.ctx.fillStyle = '#ffa502';
+    this.ctx.beginPath();
+    this.ctx.arc(cx, cy + r * 0.95, 3.5, 0, Math.PI * 2);
+    this.ctx.fill();
+  }
+}
+
+// Start Game on Window Load
+window.addEventListener('DOMContentLoaded', () => {
+  new ElvisGame();
+});
+</script>
+
+</body>
+</html>
