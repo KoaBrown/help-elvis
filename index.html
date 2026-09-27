@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Help Elvis Find His Ball! 🐶🎾</title>
+<title>Help Elvis Find His Green Ball! 🐶🎾</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
@@ -19,7 +19,7 @@
     --gold: #ffa502;
     --gold-glow: rgba(255, 165, 2, 0.4);
     --green: #2ed573;
-    --blue: #1e90ff;
+    --green-glow: rgba(46, 213, 115, 0.4);
   }
 
   * {
@@ -42,13 +42,13 @@
     padding: 12px;
     overflow-x: hidden;
     background-image:
-      radial-gradient(circle at 10% 10%, rgba(255, 165, 2, 0.04) 0%, transparent 40%),
-      radial-gradient(circle at 90% 90%, rgba(255, 71, 87, 0.04) 0%, transparent 40%);
+      radial-gradient(circle at 10% 10%, rgba(46, 213, 115, 0.05) 0%, transparent 40%),
+      radial-gradient(circle at 90% 90%, rgba(255, 71, 87, 0.05) 0%, transparent 40%);
   }
 
   #app {
     width: 100%;
-    max-width: 720px;
+    max-width: 740px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -84,7 +84,7 @@
     justify-content: center;
     font-size: 28px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-    border: 2px solid var(--gold);
+    border: 2px solid var(--green);
   }
 
   .title-group h1 {
@@ -115,7 +115,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    min-width: 56px;
+    min-width: 58px;
   }
 
   .stat-label {
@@ -132,14 +132,14 @@
     color: var(--gold);
   }
 
-  /* Stage & Canvas Container */
+  /* Stage Container */
   .stage-wrapper {
     position: relative;
     width: 100%;
     background: #17141f;
     border: 3px solid var(--bg-card-border);
     border-radius: 20px;
-    padding: 14px;
+    padding: 12px;
     box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6), inset 0 2px 6px rgba(255, 255, 255, 0.04);
     display: flex;
     flex-direction: column;
@@ -151,14 +151,14 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 4px 10px 4px;
+    padding: 0 4px 8px 4px;
   }
 
   .room-title {
     font-family: 'Fredoka', sans-serif;
     font-size: 16px;
     font-weight: 600;
-    color: var(--gold);
+    color: var(--green);
     display: flex;
     align-items: center;
     gap: 6px;
@@ -301,7 +301,7 @@
     border-radius: 20px;
     padding: 28px 32px;
     text-align: center;
-    max-width: 440px;
+    max-width: 460px;
     width: 100%;
     box-shadow: 0 20px 50px rgba(0,0,0,0.6);
     display: flex;
@@ -336,21 +336,22 @@
   }
 
   .primary-action-btn {
-    background: linear-gradient(135deg, #ff4757, #ff6b81);
-    color: white;
+    background: linear-gradient(135deg, #2ed573, #26af5f);
+    color: #0b2b17;
+    font-weight: 800;
     border: none;
     font-size: 15px;
     padding: 10px 26px;
     border-radius: 14px;
-    box-shadow: 0 6px 20px var(--accent-glow);
+    box-shadow: 0 6px 20px var(--green-glow);
   }
 
   .primary-action-btn:hover {
-    background: linear-gradient(135deg, #ff2e44, #ff5252);
+    background: linear-gradient(135deg, #25c468, #1e9d52);
     transform: translateY(-2px);
   }
 
-  /* Leaderboard Table inside modal */
+  /* Leaderboard Table */
   .leaderboard-table {
     width: 100%;
     border-collapse: collapse;
@@ -382,8 +383,8 @@
     <div class="brand">
       <div class="avatar-badge">🐶</div>
       <div class="title-group">
-        <h1>Help Elvis Find His Ball</h1>
-        <p>Black Chihuahua Puzzle Quest</p>
+        <h1>Help Elvis Find His Green Ball</h1>
+        <p>Avoid red decoy balls! Push multiple objects!</p>
       </div>
     </div>
     <div class="hud-stats">
@@ -400,8 +401,8 @@
 
   <div class="stage-wrapper">
     <div class="room-banner">
-      <div class="room-title" id="room-banner-title">🛋️ Room 1: The Hallway Entry</div>
-      <div class="room-goal-tip" id="room-banner-tip">Clear a path to the open doorway!</div>
+      <div class="room-title" id="room-banner-title">🛋️ Room 1: The Foyer</div>
+      <div class="room-goal-tip" id="room-banner-tip">Push furniture out of the way! Watch for red decoy balls!</div>
     </div>
 
     <div class="canvas-container">
@@ -480,14 +481,30 @@ class SoundEngine {
     const osc = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
     osc.type = 'triangle';
-    osc.frequency.setValueAtTime(80, this.ctx.currentTime);
-    osc.frequency.linearRampToValueAtTime(110, this.ctx.currentTime + 0.08);
-    gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
-    gain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 0.08);
+    osc.frequency.setValueAtTime(75, this.ctx.currentTime);
+    osc.frequency.linearRampToValueAtTime(115, this.ctx.currentTime + 0.09);
+    gain.gain.setValueAtTime(0.14, this.ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 0.09);
     osc.connect(gain);
     gain.connect(this.ctx.destination);
     osc.start();
-    osc.stop(this.ctx.currentTime + 0.09);
+    osc.stop(this.ctx.currentTime + 0.1);
+  }
+
+  playWrongBall() {
+    if (!this.enabled || !this.ctx) return;
+    // Disappointed dog whine / penalty buzz
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(220, this.ctx.currentTime);
+    osc.frequency.linearRampToValueAtTime(110, this.ctx.currentTime + 0.25);
+    gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.25);
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start();
+    osc.stop(this.ctx.currentTime + 0.26);
   }
 
   playDoorWin() {
@@ -510,13 +527,13 @@ class SoundEngine {
 
   playFanfare() {
     if (!this.enabled || !this.ctx) return;
-    // Bark
+    // Cheerful Bark
     const osc = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
     osc.type = 'sawtooth';
     osc.frequency.setValueAtTime(360, this.ctx.currentTime);
     osc.frequency.exponentialRampToValueAtTime(200, this.ctx.currentTime + 0.15);
-    gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+    gain.gain.setValueAtTime(0.25, this.ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.15);
     osc.connect(gain);
     gain.connect(this.ctx.destination);
@@ -541,201 +558,210 @@ class SoundEngine {
   }
 }
 
-/* --- 15 FULLY CRAFTED ROOMS --- */
+/* --- 15 MUCH HARDER ROOMS --- */
+/*
+  # = Wall
+  . = Floor
+  E = Elvis (Black Chihuahua)
+  B = Furniture / Obstacle (Multi-block pushable!)
+  D = Exit Doorway
+  G = Tattered Green Ball (The ONE and ONLY favorite ball!)
+  R = Red Decoy Ball (+5 Moves Penalty Trap!)
+*/
 const GAME_LEVELS = [
   {
-    roomNum: 1, title: "Room 1: The Hallway Entry", tip: "Push the stool out of the exit path!",
+    roomNum: 1, title: "Room 1: The Foyer Warmup", tip: "Push multiple objects in a row! Watch out for red decoy balls!",
     floorTheme: "#32293e", floorAlt: "#2b2237", wallColor: "#524366", furnColor: "#e17055", grid: [
-      "########",
-      "#......#",
-      "#.E....#",
-      "#..B...#",
-      "#......D",
-      "#......#",
-      "#......#",
-      "########"
-    ]
-  },
-  {
-    roomNum: 2, title: "Room 2: The Coat Closet", tip: "Clear the storage boxes to reach the door.",
-    floorTheme: "#24333d", floorAlt: "#1e2a33", wallColor: "#3c5666", furnColor: "#d35400", grid: [
-      "#########",
-      "###...###",
-      "#..E....#",
-      "#.BB....#",
-      "#...B...D",
-      "#.......#",
-      "###...###",
-      "#########"
-    ]
-  },
-  {
-    roomNum: 3, title: "Room 3: The Cozy Kitchen", tip: "Pantry crates are blocking the pantry exit.",
-    floorTheme: "#3d3224", floorAlt: "#33291d", wallColor: "#614e39", furnColor: "#e67e22", grid: [
-      "#########",
-      "#.......#",
-      "#..B.B..#",
-      "#.E.B...D",
-      "#..B....#",
-      "#...B...#",
-      "#.......#",
-      "#########"
-    ]
-  },
-  {
-    roomNum: 4, title: "Room 4: The Pantry Maze", tip: "Navigate carefully through the storage crates.",
-    floorTheme: "#3b2424", floorAlt: "#301d1d", wallColor: "#613b3b", furnColor: "#c0392b", grid: [
-      "#########",
-      "#...#...#",
-      "#.E.B...#",
-      "#.#.#.#.#",
-      "#...B...#",
-      "#.B.#.B.#",
-      "#...#...D",
-      "#########"
-    ]
-  },
-  {
-    roomNum: 5, title: "Room 5: The Sunroom", tip: "Slide the planters toward the garden door.",
-    floorTheme: "#243d31", floorAlt: "#1d3328", wallColor: "#3b614e", furnColor: "#27ae60", grid: [
       "##########",
       "#........#",
       "#.E.BB...#",
-      "#...##...#",
-      "#.B....B.#",
+      "#...R....#",
+      "#.B...B..#",
       "#...BB...D",
       "#........#",
       "##########"
     ]
   },
   {
-    roomNum: 6, title: "Room 6: The Art Studio", tip: "Easel and supply carts are in the way!",
+    roomNum: 2, title: "Room 2: The Coat Closet Clutter", tip: "Shift the heavy crate stack to clear the exit path.",
+    floorTheme: "#24333d", floorAlt: "#1e2a33", wallColor: "#3c5666", furnColor: "#d35400", grid: [
+      "##########",
+      "###....###",
+      "#..E.B...#",
+      "#.BBB....#",
+      "#...B.R..D",
+      "#..B.....#",
+      "###....###",
+      "##########"
+    ]
+  },
+  {
+    roomNum: 3, title: "Room 3: The Kitchen Storage", tip: "Decoy red balls look enticing, but Elvis hates them!",
+    floorTheme: "#3d3224", floorAlt: "#33291d", wallColor: "#614e39", furnColor: "#e67e22", grid: [
+      "##########",
+      "#........#",
+      "#..B.B.R.#",
+      "#.E.BBB..D",
+      "#..B..B..#",
+      "#...B....#",
+      "#..R.....#",
+      "##########"
+    ]
+  },
+  {
+    roomNum: 4, title: "Room 4: The Pantry Squeeze", tip: "Line up multi-block pushes through narrow passages.",
+    floorTheme: "#3b2424", floorAlt: "#301d1d", wallColor: "#613b3b", furnColor: "#c0392b", grid: [
+      "##########",
+      "#...##...#",
+      "#.E.BB...#",
+      "#.#.#.#.#",
+      "#...BB...#",
+      "#.B.#.BB.#",
+      "#...R...D",
+      "##########"
+    ]
+  },
+  {
+    roomNum: 5, title: "Room 5: The Sunroom Terrace", tip: "Terracotta planters block the door. Don't touch the red ball!",
+    floorTheme: "#243d31", floorAlt: "#1d3328", wallColor: "#3b614e", furnColor: "#27ae60", grid: [
+      "##########",
+      "#........#",
+      "#.E.BBB..#",
+      "#...##...#",
+      "#.B.R..B.#",
+      "#..BBB...D",
+      "#........#",
+      "##########"
+    ]
+  },
+  {
+    roomNum: 6, title: "Room 6: The Art Studio Layout", tip: "Easel carts stacked three-deep!",
     floorTheme: "#3d243a", floorAlt: "#321d2f", wallColor: "#613b5b", furnColor: "#8e44ad", grid: [
-      "##########",
-      "#........#",
-      "#..B.B...#",
-      "#.E..B...#",
-      "#...B.B..#",
-      "#.....B..D",
-      "#........#",
-      "##########"
+      "###########",
+      "#.........#",
+      "#..B.BBB..#",
+      "#.E..B.R..#",
+      "#...BBB...#",
+      "#.....BB..D",
+      "#.........#",
+      "###########"
     ]
   },
   {
-    roomNum: 7, title: "Room 7: The Library", tip: "Heavy bookcases block the reading room exit.",
+    roomNum: 7, title: "Room 7: The Bookcase Labyrinth", tip: "Complex Sokoban pathing required.",
     floorTheme: "#332c24", floorAlt: "#28231d", wallColor: "#544637", furnColor: "#a0522d", grid: [
-      "##########",
-      "#...##...#",
-      "#.E.B..B.#",
-      "#...#....#",
-      "#.B.#.B..#",
-      "#....B...D",
-      "#........#",
-      "##########"
+      "###########",
+      "#...###...#",
+      "#.E.BBB.B.#",
+      "#...#...R.#",
+      "#.B.#.BBB.#",
+      "#....B....D",
+      "#.........#",
+      "###########"
     ]
   },
   {
-    roomNum: 8, title: "Room 8: The Music Parlor", tip: "Clear the speaker cabinets and instrument cases.",
+    roomNum: 8, title: "Room 8: The Music Hall Jam", tip: "Pushing 3 blocks at once opens a shortcut!",
     floorTheme: "#24293d", floorAlt: "#1d2133", wallColor: "#3b4461", furnColor: "#2980b9", grid: [
-      "##########",
-      "#........#",
-      "#.E.B.B..#",
-      "#...B.B..#",
-      "#.B....B.#",
-      "#...B....D",
-      "#........#",
-      "##########"
+      "###########",
+      "#.........#",
+      "#.E.BBB.B.#",
+      "#...B.R.B.#",
+      "#.B.BBB.B.#",
+      "#...B.....D",
+      "#.........#",
+      "###########"
     ]
   },
   {
-    roomNum: 9, title: "Room 9: The Game Room", tip: "Arcade stools and toy chests everywhere!",
+    roomNum: 9, title: "Room 9: The Arcade Gauntlet", tip: "Red decoy balls litter the path to the exit.",
     floorTheme: "#3d242c", floorAlt: "#321d24", wallColor: "#613b46", furnColor: "#e84393", grid: [
-      "##########",
-      "#...##...#",
-      "#.E..B...#",
-      "#..B.B.B.#",
-      "#....B...#",
-      "#..B...B.D",
-      "#........#",
-      "##########"
+      "###########",
+      "#...###...#",
+      "#.E..BBB..#",
+      "#..R.B.B..#",
+      "#....B.R..#",
+      "#..BBB..B.D",
+      "#.........#",
+      "###########"
     ]
   },
   {
-    roomNum: 10, title: "Room 10: The Workshop", tip: "Tool chests and workbench blocks.",
+    roomNum: 10, title: "Room 10: The Workshop Tightrope", tip: "Carefully push workbench blocks without trapping yourself.",
     floorTheme: "#3d3624", floorAlt: "#322c1d", wallColor: "#61543b", furnColor: "#f1c40f", grid: [
-      "##########",
-      "#........#",
-      "#.E.B..B.#",
-      "#...B.B..#",
-      "#.B....B.#",
-      "#...B.B..D",
-      "#........#",
-      "##########"
+      "###########",
+      "#.........#",
+      "#.E.BBB.B.#",
+      "#...B.BBB.#",
+      "#.B.R..B..#",
+      "#...BB.B..D",
+      "#.........#",
+      "###########"
     ]
   },
   {
-    roomNum: 11, title: "Room 11: The Greenhouse", tip: "Potted fern crates blocking the pathway.",
+    roomNum: 11, title: "Room 11: The Botanical Nursery", tip: "Dense fern crates require precise multi-pushes.",
     floorTheme: "#253d24", floorAlt: "#1e331d", wallColor: "#3d613b", furnColor: "#2ecc71", grid: [
-      "##########",
-      "#...##...#",
-      "#.E.B..B.#",
-      "#...B.B..#",
-      "#.B....B.#",
-      "#....B...D",
-      "#........#",
-      "##########"
+      "###########",
+      "#...###...#",
+      "#.E.BBB.B.#",
+      "#...BB.B..#",
+      "#.B..R.B..#",
+      "#....BBB..D",
+      "#.........#",
+      "###########"
     ]
   },
   {
-    roomNum: 12, title: "Room 12: The Observatory", tip: "Telescope gear boxes and star charts.",
+    roomNum: 12, title: "Room 12: The Observatory Chamber", tip: "Traps everywhere! Plan your route step by step.",
     floorTheme: "#24253d", floorAlt: "#1d1e33", wallColor: "#3b3d61", furnColor: "#3498db", grid: [
-      "##########",
-      "#........#",
-      "#.E.B.B..#",
-      "#...BB...#",
-      "#.B.B.B..#",
-      "#....B...D",
-      "#........#",
-      "##########"
+      "###########",
+      "#.........#",
+      "#.E.BBB.B.#",
+      "#...BBB.R.#",
+      "#.B.B.B.B.#",
+      "#....BBB..D",
+      "#.........#",
+      "###########"
     ]
   },
   {
-    roomNum: 13, title: "Room 13: The Grand Ballroom", tip: "Chairs and velvet ropes in the way.",
+    roomNum: 13, title: "Room 13: The Grand Ballroom Floor", tip: "Multiple red decoy balls guard the doorway.",
     floorTheme: "#3d2438", floorAlt: "#321d2e", wallColor: "#613b58", furnColor: "#9b59b6", grid: [
-      "##########",
-      "#...##...#",
-      "#.E.B..B.#",
-      "#...BB...#",
-      "#.B.B.B..#",
-      "#....B...D",
-      "#........#",
-      "##########"
+      "###########",
+      "#...###...#",
+      "#.E.BBB.B.#",
+      "#..R.BBB..#",
+      "#.B.B.B.R.#",
+      "#....BBB..D",
+      "#.........#",
+      "###########"
     ]
   },
   {
-    roomNum: 14, title: "Room 14: The Secret Vault", tip: "Heavy steel crates guard the final courtyard.",
+    roomNum: 14, title: "Room 14: The Steel Vault Passage", tip: "The toughest doorway puzzle yet!",
     floorTheme: "#2c2c2c", floorAlt: "#222222", wallColor: "#4a4a4a", furnColor: "#7f8c8d", grid: [
-      "##########",
-      "#........#",
-      "#.E.B..B.#",
-      "#...BB.B.#",
-      "#.B.B.B..#",
-      "#...BB...D",
-      "#........#",
-      "##########"
+      "###########",
+      "#.........#",
+      "#.E.BBB.B.#",
+      "#...BBB.B.#",
+      "#.B.B.B.B.#",
+      "#...BBB.R.D",
+      "#.........#",
+      "###########"
     ]
   },
   {
-    roomNum: 15, title: "Room 15: The Backyard Garden", tip: "FINAL ROOM! Elvis's red bouncy ball is right there!",
+    roomNum: 15, title: "Room 15: The Backyard Toy Haven", tip: "THE TATTERED GREEN BALL IS HERE! Avoid the red decoys & push to victory!",
     floorTheme: "#223d1d", floorAlt: "#1b3317", wallColor: "#376130", furnColor: "#95a5a6", isFinal: true, grid: [
-      "##########",
-      "#........#",
-      "#.E.B..B.#",
-      "#..BB.BB.#",
-      "#...B.B..#",
-      "#..B...B.#",
-      "#....*...#",
-      "##########"
+      "############",
+      "#..........#",
+      "#.E.BBB..B.#",
+      "#..BBB.BBB.#",
+      "#...B.R.B..#",
+      "#..BBB.R.B.#",
+      "#.....G....#",
+      "############"
     ]
   }
 ];
@@ -751,10 +777,9 @@ class ElvisGame {
     this.history = [];
     this.moves = 0;
     this.startTime = Date.now();
-    this.totalGameTime = 0;
     this.isLevelWon = false;
 
-    // Elvis (Black Chihuahua) properties
+    // Elvis (Black Chihuahua)
     this.elvis = {
       x: 0, y: 0,
       facing: 'right',
@@ -764,14 +789,13 @@ class ElvisGame {
 
     this.particles = [];
     this.pawTrails = [];
+    this.penaltyTexts = [];
     this.ballWobble = 0;
 
-    // Device & Scale auto-detection
     this.detectDevice();
     this.initLevel(0);
     this.bindEvents();
 
-    // Loop
     this.lastTime = performance.now();
     this.loop = this.loop.bind(this);
     requestAnimationFrame(this.loop);
@@ -805,19 +829,18 @@ class ElvisGame {
     this.isLevelWon = false;
     this.particles = [];
     this.pawTrails = [];
+    this.penaltyTexts = [];
     this.startTime = Date.now();
 
     this.rows = lvl.grid.length;
     this.cols = lvl.grid[0].length;
 
-    // Responsive canvas sizing
     const maxDim = Math.max(this.rows, this.cols);
     const availableWidth = Math.min(window.innerWidth - 60, 520);
     this.tileSize = Math.floor(availableWidth / maxDim);
     this.canvas.width = this.cols * this.tileSize;
     this.canvas.height = this.rows * this.tileSize;
 
-    // Parse map grid
     this.map = [];
     for (let r = 0; r < this.rows; r++) {
       const row = [];
@@ -836,7 +859,6 @@ class ElvisGame {
   }
 
   bindEvents() {
-    // Keyboard listener
     window.addEventListener('keydown', (e) => {
       this.sound.init();
       if (this.isLevelWon) return;
@@ -871,7 +893,7 @@ class ElvisGame {
     setupDpad('padLeft', -1, 0, 'left');
     setupDpad('padRight', 1, 0, 'right');
 
-    // Touch Swipe Support on Canvas
+    // Touch Swipe
     let touchStartX = 0, touchStartY = 0;
     this.canvas.addEventListener('touchstart', (e) => {
       if (e.touches.length === 1) {
@@ -884,7 +906,7 @@ class ElvisGame {
       if (!touchStartX || !touchStartY || this.isLevelWon) return;
       const dxTouch = e.changedTouches[0].clientX - touchStartX;
       const dyTouch = e.changedTouches[0].clientY - touchStartY;
-      const threshold = 30;
+      const threshold = 25;
 
       this.sound.init();
       if (Math.abs(dxTouch) > Math.abs(dyTouch)) {
@@ -948,15 +970,56 @@ class ElvisGame {
     const target = this.map[ny][nx];
     if (target === '#') return; // Wall
 
-    // Push obstacle
-    if (target === 'B') {
-      const bx = nx + dx;
-      const by = ny + dy;
-      if (bx >= 0 && bx < this.cols && by >= 0 && by < this.rows) {
-        if (this.map[by][bx] === '.') {
+    // Step onto Red Decoy Ball! (+5 Penalty Moves!)
+    if (target === 'R') {
+      this.saveStateSnapshot();
+      this.map[ny][nx] = '.'; // Remove ball
+      this.addPawTrail(this.elvis.x, this.elvis.y);
+      this.elvis.x = nx;
+      this.elvis.y = ny;
+      this.moves += 6; // 1 move + 5 penalty moves!
+      document.getElementById('hud-moves').innerText = this.moves;
+
+      this.sound.playWrongBall();
+      this.addPenaltyText("NOT MY BALL! +5 MOVES", nx * this.tileSize + this.tileSize/2, ny * this.tileSize + this.tileSize/2);
+      return;
+    }
+
+    // MULTI-BLOCK PUSH MECHANIC (Push a line of 1, 2, or N blocks simultaneously!)
+    let chain = [];
+    let currX = nx;
+    let currY = ny;
+
+    while (currX >= 0 && currX < this.cols && currY >= 0 && currY < this.rows) {
+      const t = this.map[currY][currX];
+      if (t === 'B') {
+        chain.push({x: currX, y: currY});
+        currX += dx;
+        currY += dy;
+      } else {
+        break;
+      }
+    }
+
+    if (chain.length > 0) {
+      // Check tile immediately after the chain of blocks
+      if (currX >= 0 && currX < this.cols && currY >= 0 && currY < this.rows) {
+        const endTile = this.map[currY][currX];
+        if (endTile === '.' || endTile === 'R') {
           this.saveStateSnapshot();
+
+          // Shift all blocks in the chain forward by 1 step (from back to front)
+          for (let i = chain.length - 1; i >= 0; i--) {
+            const b = chain[i];
+            this.map[b.y + dy][b.x + dx] = 'B';
+          }
           this.map[ny][nx] = '.';
-          this.map[by][bx] = 'B';
+
+          // If pushed block crushed a red decoy ball
+          if (endTile === 'R') {
+            this.sound.playWrongBall();
+            this.addPenaltyText("RED BALL CRUSHED!", currX * this.tileSize + this.tileSize/2, currY * this.tileSize + this.tileSize/2);
+          }
 
           this.addPawTrail(this.elvis.x, this.elvis.y);
           this.elvis.x = nx;
@@ -965,11 +1028,11 @@ class ElvisGame {
           document.getElementById('hud-moves').innerText = this.moves;
 
           this.sound.playPush();
-          this.spawnDust(bx * this.tileSize + this.tileSize/2, by * this.tileSize + this.tileSize/2);
+          this.spawnDust((chain[chain.length-1].x + dx) * this.tileSize + this.tileSize/2, (chain[chain.length-1].y + dy) * this.tileSize + this.tileSize/2);
           return;
         }
       }
-      return; // Blocked
+      return; // Chain blocked at end
     }
 
     // Doorway reached
@@ -987,8 +1050,8 @@ class ElvisGame {
       return;
     }
 
-    // Ball reached! (Final Victory)
-    if (target === '*') {
+    // Tattered Green Ball reached! (Final Victory in Room 15)
+    if (target === 'G') {
       this.saveStateSnapshot();
       this.addPawTrail(this.elvis.x, this.elvis.y);
       this.elvis.x = nx;
@@ -1002,7 +1065,7 @@ class ElvisGame {
       return;
     }
 
-    // Normal floor move
+    // Normal floor step
     if (target === '.') {
       this.saveStateSnapshot();
       this.addPawTrail(this.elvis.x, this.elvis.y);
@@ -1012,6 +1075,16 @@ class ElvisGame {
       document.getElementById('hud-moves').innerText = this.moves;
       this.sound.playStep();
     }
+  }
+
+  addPenaltyText(text, x, y) {
+    this.penaltyTexts.push({
+      text: text,
+      x: x,
+      y: y,
+      alpha: 1,
+      vy: -1.2
+    });
   }
 
   recordScore() {
@@ -1034,9 +1107,9 @@ class ElvisGame {
     const btn = document.getElementById('modalBtn');
 
     if (isFinal) {
-      icon.innerText = '🎾🐶❤️';
-      title.innerText = "Elvis Found His Ball!";
-      body.innerText = `A-woof! Little black Elvis successfully solved all 15 rooms and retrieved his bouncy red ball in ${this.moves} moves!`;
+      icon.innerText = '🎾🐶💚';
+      title.innerText = "Elvis Found His Favorite Green Ball!";
+      body.innerText = `HAPPY WOOF! Elvis found his beloved tattered green ball after clearing all 15 rooms! Total moves: ${this.moves}.`;
       btn.innerText = "View Leaderboard & Play Again 🐾";
     } else {
       icon.innerText = '🚪✨';
@@ -1045,14 +1118,13 @@ class ElvisGame {
       btn.innerText = "Next Room 🐾";
     }
 
-    // Confetti particles
     for (let i = 0; i < 60; i++) {
       this.particles.push({
         x: this.canvas.width / 2,
         y: this.canvas.height / 2,
         vx: (Math.random() - 0.5) * 16,
         vy: (Math.random() - 0.5) * 16 - 4,
-        color: ['#ff4757', '#ffa502', '#2ed573', '#1e90ff', '#e056fd', '#fffa65'][Math.floor(Math.random()*6)],
+        color: ['#2ed573', '#ffa502', '#2ed573', '#1e90ff', '#e056fd', '#fffa65'][Math.floor(Math.random()*6)],
         size: Math.random() * 6 + 4,
         alpha: 1
       });
@@ -1086,14 +1158,13 @@ class ElvisGame {
           <tbody>${rowsHTML}</tbody>
         </table>
       </div>
-      <p style="font-size:12px; font-weight:700; color:var(--gold);">Total Best Moves: ${totalMoves}</p>
+      <p style="font-size:13px; font-weight:700; color:var(--green);">Total Best Moves: ${totalMoves}</p>
       <button class="primary-action-btn" id="closeLbBtn">Resume Game 🐾</button>
     `;
 
     overlay.classList.add('active');
     document.getElementById('closeLbBtn').onclick = () => {
       overlay.classList.remove('active');
-      // Reset card markup back to normal win template if needed
       setTimeout(() => this.resetModalMarkup(), 300);
     };
   }
@@ -1149,13 +1220,20 @@ class ElvisGame {
   }
 
   update(dt) {
-    // Tail wagging
     this.elvis.tailAngle += 0.18 * this.elvis.tailDir;
     if (Math.abs(this.elvis.tailAngle) > 0.65) {
       this.elvis.tailDir *= -1;
     }
 
     this.ballWobble += 0.05;
+
+    // Floating Penalty Texts
+    for (let i = this.penaltyTexts.length - 1; i >= 0; i--) {
+      const pt = this.penaltyTexts[i];
+      pt.y += pt.vy;
+      pt.alpha -= 0.02;
+      if (pt.alpha <= 0) this.penaltyTexts.splice(i, 1);
+    }
 
     // Particles
     for (let i = this.particles.length - 1; i >= 0; i--) {
@@ -1167,7 +1245,7 @@ class ElvisGame {
       if (p.alpha <= 0) this.particles.splice(i, 1);
     }
 
-    // Paw trails fade
+    // Paw trails
     for (let i = this.pawTrails.length - 1; i >= 0; i--) {
       const t = this.pawTrails[i];
       t.alpha -= 0.003;
@@ -1179,7 +1257,7 @@ class ElvisGame {
     const lvl = GAME_LEVELS[this.currentLevelIdx];
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-    // 1. Render Map Tiles
+    // Render Map
     for (let r = 0; r < this.rows; r++) {
       for (let c = 0; c < this.cols; c++) {
         const x = c * this.tileSize;
@@ -1210,9 +1288,14 @@ class ElvisGame {
           this.drawDoorway(x, y);
         }
 
-        // Ball
-        if (tile === '*') {
-          this.drawBall(x, y);
+        // Tattered Green Ball (Goal)
+        if (tile === 'G') {
+          this.drawGreenBall(x, y);
+        }
+
+        // Red Decoy Ball (Penalty Trap)
+        if (tile === 'R') {
+          this.drawRedDecoyBall(x, y);
         }
 
         // Furniture Box
@@ -1242,6 +1325,14 @@ class ElvisGame {
       this.ctx.fill();
     }
     this.ctx.globalAlpha = 1;
+
+    // Floating Penalty Text Overlays
+    for (const pt of this.penaltyTexts) {
+      this.ctx.fillStyle = `rgba(255, 71, 87, ${pt.alpha})`;
+      this.ctx.font = 'bold 14px Fredoka';
+      this.ctx.textAlign = 'center';
+      this.ctx.fillText(pt.text, pt.x, pt.y);
+    }
   }
 
   drawDoorway(x, y) {
@@ -1263,10 +1354,10 @@ class ElvisGame {
     this.ctx.fillText('EXIT ➔', x + this.tileSize / 2, y + this.tileSize / 2);
   }
 
-  drawBall(x, y) {
+  drawGreenBall(x, y) {
     const cx = x + this.tileSize / 2;
     const cy = y + this.tileSize / 2 + Math.sin(this.ballWobble) * 3;
-    const rad = this.tileSize * 0.32;
+    const rad = this.tileSize * 0.33;
 
     // Shadow
     this.ctx.fillStyle = 'rgba(0,0,0,0.35)';
@@ -1274,21 +1365,59 @@ class ElvisGame {
     this.ctx.ellipse(cx, y + this.tileSize * 0.82, rad * 1.1, rad * 0.4, 0, 0, Math.PI * 2);
     this.ctx.fill();
 
-    // Red Ball
+    // Tattered Green Ball
     const grad = this.ctx.createRadialGradient(cx - rad * 0.3, cy - rad * 0.3, rad * 0.1, cx, cy, rad);
-    grad.addColorStop(0, '#ff7675');
-    grad.addColorStop(0.7, '#d63031');
-    grad.addColorStop(1, '#800000');
+    grad.addColorStop(0, '#7bed9f');
+    grad.addColorStop(0.7, '#2ed573');
+    grad.addColorStop(1, '#10ac84');
     this.ctx.fillStyle = grad;
     this.ctx.beginPath();
     this.ctx.arc(cx, cy, rad, 0, Math.PI * 2);
     this.ctx.fill();
 
-    // Yellow seam
-    this.ctx.strokeStyle = '#feca57';
+    // Worn / Tattered stitches
+    this.ctx.strokeStyle = '#20bf6b';
     this.ctx.lineWidth = 2.5;
     this.ctx.beginPath();
-    this.ctx.arc(cx, cy, rad * 0.7, 0.25 * Math.PI, 0.85 * Math.PI);
+    this.ctx.arc(cx, cy, rad * 0.7, 0.2 * Math.PI, 0.85 * Math.PI);
+    this.ctx.stroke();
+
+    // Sparkles
+    this.ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    this.ctx.beginPath();
+    this.ctx.arc(cx - rad * 0.35, cy - rad * 0.35, 3.5, 0, Math.PI * 2);
+    this.ctx.fill();
+  }
+
+  drawRedDecoyBall(x, y) {
+    const cx = x + this.tileSize / 2;
+    const cy = y + this.tileSize / 2;
+    const rad = this.tileSize * 0.28;
+
+    // Shadow
+    this.ctx.fillStyle = 'rgba(0,0,0,0.25)';
+    this.ctx.beginPath();
+    this.ctx.ellipse(cx, y + this.tileSize * 0.8, rad, rad * 0.35, 0, 0, Math.PI * 2);
+    this.ctx.fill();
+
+    // Red Ball Gradient
+    const grad = this.ctx.createRadialGradient(cx - rad * 0.3, cy - rad * 0.3, rad * 0.1, cx, cy, rad);
+    grad.addColorStop(0, '#ff7675');
+    grad.addColorStop(0.8, '#d63031');
+    grad.addColorStop(1, '#636e72');
+    this.ctx.fillStyle = grad;
+    this.ctx.beginPath();
+    this.ctx.arc(cx, cy, rad, 0, Math.PI * 2);
+    this.ctx.fill();
+
+    // Danger symbol or cross on decoy ball
+    this.ctx.strokeStyle = '#fff';
+    this.ctx.lineWidth = 1.5;
+    this.ctx.beginPath();
+    this.ctx.moveTo(cx - 3, cy - 3);
+    this.ctx.lineTo(cx + 3, cy + 3);
+    this.ctx.moveTo(cx + 3, cy - 3);
+    this.ctx.lineTo(cx - 3, cy + 3);
     this.ctx.stroke();
   }
 
@@ -1326,7 +1455,7 @@ class ElvisGame {
     this.ctx.ellipse(cx, cy + r * 0.85, r * 1.05, r * 0.45, 0, 0, Math.PI * 2);
     this.ctx.fill();
 
-    // Wagging Tail (Black fluffy tail)
+    // Wagging Tail
     const tailX = cx - (this.elvis.facing === 'right' ? r * 0.85 : (this.elvis.facing === 'left' ? -r * 0.85 : 0));
     const tailY = cy + r * 0.3;
     this.ctx.save();
@@ -1338,20 +1467,20 @@ class ElvisGame {
     this.ctx.fill();
     this.ctx.restore();
 
-    // Black Chihuahua Body
+    // Black Body
     this.ctx.fillStyle = '#1c1c1c';
     this.ctx.beginPath();
     this.ctx.arc(cx, cy, r, 0, Math.PI * 2);
     this.ctx.fill();
 
-    // Tan Eyebrows & Cheeks (Chihuahua markings)
+    // Tan Eyebrows & Markings
     this.ctx.fillStyle = '#d4a373';
     this.ctx.beginPath();
     this.ctx.arc(cx - r*0.4, cy - r*0.3, r*0.22, 0, Math.PI * 2);
     this.ctx.arc(cx + r*0.4, cy - r*0.3, r*0.22, 0, Math.PI * 2);
     this.ctx.fill();
 
-    // Large Bat Ears (Chihuahua signature)
+    // Bat Ears
     this.ctx.fillStyle = '#1c1c1c';
     if (this.elvis.facing === 'left') {
       this.ctx.beginPath();
@@ -1367,7 +1496,7 @@ class ElvisGame {
       this.ctx.fill();
     }
 
-    // Snout and sticking-out pink tongue!
+    // Snout
     let noseX = cx, noseY = cy;
     if (this.elvis.facing === 'right') noseX += r * 0.45;
     if (this.elvis.facing === 'left') noseX -= r * 0.45;
@@ -1380,7 +1509,7 @@ class ElvisGame {
     this.ctx.arc(noseX, noseY, r * 0.38, 0, Math.PI * 2);
     this.ctx.fill();
 
-    // Pink tongue sticking out!
+    // Tongue
     this.ctx.fillStyle = '#ff7675';
     this.ctx.beginPath();
     this.ctx.ellipse(noseX, noseY + r * 0.25, r * 0.16, r * 0.22, 0, 0, Math.PI * 2);
@@ -1392,7 +1521,7 @@ class ElvisGame {
     this.ctx.arc(noseX, noseY - 2, r * 0.16, 0, Math.PI * 2);
     this.ctx.fill();
 
-    // Big expressive eyes
+    // Eyes
     if (this.elvis.facing !== 'up') {
       const eyeOffX = this.elvis.facing === 'right' ? 3 : (this.elvis.facing === 'left' ? -3 : 0);
       this.ctx.fillStyle = '#000';
@@ -1401,7 +1530,6 @@ class ElvisGame {
       this.ctx.arc(cx + 6 + eyeOffX, cy - 6, 4, 0, Math.PI * 2);
       this.ctx.fill();
 
-      // Glimmer
       this.ctx.fillStyle = '#fff';
       this.ctx.beginPath();
       this.ctx.arc(cx - 7 + eyeOffX, cy - 8, 1.3, 0, Math.PI * 2);
@@ -1411,7 +1539,7 @@ class ElvisGame {
   }
 }
 
-// Initialize on DOM Ready
+// Start Game
 window.addEventListener('DOMContentLoaded', () => {
   new ElvisGame();
 });
